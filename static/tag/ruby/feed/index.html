@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	
+xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+>
+
+<channel>
+	<title>ruby &#8211; Pilanites</title>
+	<atom:link href="https://www.pilanites.com/tag/ruby/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.pilanites.com</link>
+	<description>Business of Online Products</description>
+	<lastBuildDate>
+	Fri, 05 Dec 2025 14:13:45 +0000	</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.1.24</generator>
+
+<image>
+	<url>https://i0.wp.com/www.pilanites.com/wp-content/uploads/2016/06/cropped-lotucrocket.png?fit=32%2C32&#038;ssl=1</url>
+	<title>ruby &#8211; Pilanites</title>
+	<link>https://www.pilanites.com</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">35050694</site>	<item>
+		<title>Solid Trifecta + Kamal + Postgres don&#8217;t play along nice, this is the way to fix it</title>
+		<link>https://www.pilanites.com/kamal-pg/</link>
+				<pubDate>Tue, 04 Nov 2025 07:35:48 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[developers]]></category>
+		<category><![CDATA[rails]]></category>
+		<category><![CDATA[kamal]]></category>
+		<category><![CDATA[ruby]]></category>
+
+		<guid isPermaLink="false">https://www.pilanites.com/?p=227</guid>
+				<description><![CDATA[<p>When you deploy a fresh Rails 8 app with the Solid “trifecta” (Solid Cache, Solid Queue, Solid Cable), you actually have four database connections in production: primary, cache, queue, and cable. If only `DATABASE_URL` is set, the other three try to connect via the default...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/kamal-pg/">Solid Trifecta + Kamal + Postgres don&#8217;t play along nice, this is the way to fix it</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[
+<p>When you deploy a fresh Rails 8 app with the Solid “trifecta” (Solid Cache, Solid Queue, Solid Cable), you actually have <strong>four</strong> database connections in production: <em>primary</em>, <em>cache</em>, <em>queue</em>, and <em>cable</em>. If only `<em>DATABASE_URL</em>` is set, the other three try to connect via the default local socket and you’ll see:</p>
+
+
+
+<pre class="wp-block-code"><code>bin/rails aborted!
+ActiveRecord::ConnectionNotEstablished: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: No such file or directory
+...
+Tasks: TOP => db:prepare</code></pre>
+
+
+
+<p>The fix is to <strong>explicitly configure all Solid DBs</strong> and run their migrations.</p>
+
+
+
+<h3>1) Wire up all four database URLs</h3>
+
+
+
+<p>Use distinct URLs, or point them all to the same Postgres if that’s fine for your scale.</p>
+
+
+
+<p><em>config/database.yml</em> (production)</p>
+
+
+
+<pre class="wp-block-code"><code>production:
+  primary:
+    url: &lt;%= ENV["PRIMARY_DATABASE_URL"] || ENV["DATABASE_URL"] %>
+
+  cache:
+    url: &lt;%= ENV["CACHE_DATABASE_URL"] || ENV["DATABASE_URL"] %>
+    migrations_paths: db/cache_migrate
+
+  queue:
+    url: &lt;%= ENV["QUEUE_DATABASE_URL"] || ENV["DATABASE_URL"] %>
+    migrations_paths: db/queue_migrate
+
+  cable:
+    url: &lt;%= ENV["CABLE_DATABASE_URL"] || ENV["DATABASE_URL"] %></code></pre>
+
+
+
+<p>Rails 8 treats cache/queue/cable as separate DB configs; providing <em>CACHE_DATABASE_URL</em>, <em>QUEUE_DATABASE_URL</em>, and <em>CABLE_DATABASE_URL</em> (or falling back to <em>DATABASE_URL</em>) prevents the “local socket” miss.</p>
+
+
+
+<p>Kamal <em>deploy.yml</em> snippet:</p>
+
+
+
+<pre class="wp-block-code"><code>env:
+  clear:
+    RAILS_ENV: production
+  secret:
+    - DATABASE_URL
+    - PRIMARY_DATABASE_URL
+    - CACHE_DATABASE_URL
+    - QUEUE_DATABASE_URL
+    - CABLE_DATABASE_URL</code></pre>
+
+
+
+<p>(If you’re running a Postgres accessory with Kamal, ensure these URLs point at that service, not a local socket.)</p>
+
+
+
+<h3>2) Install Solid components (if not already)</h3>
+
+
+
+<p>These tasks create the right schema/migration paths.</p>
+
+
+
+<pre class="wp-block-code"><code>bin/rails solid_cache:install
+bin/rails solid_queue:install
+bin/rails solid_cable:install</code></pre>
+
+
+
+<ul><li>Cache/Queue create migration paths under <code>db/cache_migrate</code> and <code>db/queue_migrate</code>.</li><li>Cable creates <code>db/cable_schema.rb</code> and requires a DB entry.</li></ul>
+
+
+
+<h3>3) Commit a migration for cache/queue (don’t rely only on schema dumps)</h3>
+
+
+
+<p>Add an explicit migration under each path so <code>db:prepare</code> can apply them in production:</p>
+
+
+
+<pre class="wp-block-code"><code>bin/rails g migration InitSolidCache --migration_path=db/cache_migrate
+bin/rails g migration InitSolidQueue --migration_path=db/queue_migrate</code></pre>
+
+
+
+<p>Paste the table definitions from your local generated schema files (or re-run the install tasks locally and copy the structure). Then:</p>
+
+
+
+<pre class="wp-block-code"><code>bin/rails db:prepare</code></pre>
+
+
+
+<p>This guarantees the cache and queue tables exist in the target DB(s), just like your primary.</p>
+
+
+
+<h3>4) (Option) Keep it simple: one Postgres for all four</h3>
+
+
+
+<p>For small apps, it’s perfectly fine to point <code>primary</code>, <code>cache</code>, <code>queue</code>, and <code>cable</code> to the <strong>same</strong> Postgres and split them out later as load grows. Update the four entries in <code>database.yml</code> to all use <code>ENV["DATABASE_URL"]</code>.</p>
+
+
+
+<h3>Why this happens</h3>
+
+
+
+<p>Rails 8 defaults to multi-DB for Solid Cache/Queue/Cable. PaaS/Kamal setups commonly only export <code>DATABASE_URL</code>. Without explicit URLs, the Solid DBs fall back to a local socket path (<code>/var/run/postgresql/...</code>), which doesn’t exist in your container, hence <code>ConnectionNotEstablished</code>. Setting <code>*_DATABASE_URL</code> (or wiring <code>database.yml</code> to reuse <code>DATABASE_URL</code>) aligns all four connections with your actual Postgres.</p>
+
+
+
+<h3>Quick Checklist (made by AI)</h3>
+
+
+
+<p>[ ] <code>database.yml</code> has <code>primary/cache/queue/cable</code> with URLs <br>[ ] Env has <code>CACHE_DATABASE_URL</code>, <code>QUEUE_DATABASE_URL</code>, <code>CABLE_DATABASE_URL</code> (or they fall back to <code>DATABASE_URL</code>)<br>[ ] Ran <code>solid_cache:install</code>, <code>solid_queue:install</code>, <code>solid_cable:install</code> <br>[ ] Created/committed migrations under <code>db/cache_migrate</code> and <code>db/queue_migrate</code> * [ ] <code>bin/rails db:prepare</code> succeeds in the deploy container</p>
+
+
+
+<p>After this, Kamal deploys should boot cleanly without the Postgres socket error, and Hotwire/Action Cable plus jobs and cache will work as expected.</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/kamal-pg/">Solid Trifecta + Kamal + Postgres don&#8217;t play along nice, this is the way to fix it</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+									<post-id xmlns="com-wordpress:feed-additions:1">227</post-id>	</item>
+	</channel>
+</rss>

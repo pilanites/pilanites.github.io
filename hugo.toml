@@ -1,0 +1,10 @@
+baseURL = "https://www.pilanites.com/"
+languageCode = "en"
+title = "PILANITES"
+
+# The legacy sitemap, homepage, archives, and feeds are preserved as static
+# files. Hugo generates only future Markdown posts and their `/posts/` index.
+disableKinds = ["home", "taxonomy", "term", "RSS", "sitemap"]
+
+[permalinks]
+  posts = "/:slug/"

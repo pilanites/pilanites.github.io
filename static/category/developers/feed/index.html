@@ -1,0 +1,714 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	
+xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+>
+
+<channel>
+	<title>developers &#8211; Pilanites</title>
+	<atom:link href="https://www.pilanites.com/category/developers/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.pilanites.com</link>
+	<description>Business of Online Products</description>
+	<lastBuildDate>
+	Fri, 05 Dec 2025 14:13:45 +0000	</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.1.24</generator>
+
+<image>
+	<url>https://i0.wp.com/www.pilanites.com/wp-content/uploads/2016/06/cropped-lotucrocket.png?fit=32%2C32&#038;ssl=1</url>
+	<title>developers &#8211; Pilanites</title>
+	<link>https://www.pilanites.com</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">35050694</site>	<item>
+		<title>The missing Webhooks documentation for Fizzy</title>
+		<link>https://www.pilanites.com/fizzy-webhooks-documentation/</link>
+				<pubDate>Fri, 05 Dec 2025 14:13:14 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[developers]]></category>
+		<category><![CDATA[guides]]></category>
+
+		<guid isPermaLink="false">https://www.pilanites.com/?p=235</guid>
+				<description><![CDATA[<p>This the documentation I used to build bubblehook, a Fizzy webhook receiver that sends updates to Slack. I hope this is useful. The post is written by AI, with a lot of rough notes fed to it from my reading the code, and observing the...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/fizzy-webhooks-documentation/">The missing Webhooks documentation for Fizzy</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[
+<p>This the documentation I used to build <a href="https://bubblehook.com">bubblehook</a>, a Fizzy webhook receiver that sends updates to Slack. I hope this is useful. The post is written by AI, with a lot of rough notes fed to it from my reading the code, and observing the webhooks. Enjoy!</p>
+
+
+
+<p>Fizzy doesn’t currently publish full webhook documentation, so I’ve put together a complete reference for anyone building integrations, automations, or notifications around Fizzy boards. This guide covers every event Fizzy emits, how the webhook delivery works, how signatures are generated, and what the payloads look like in JSON, Slack, Campfire, and Basecamp formats.</p>
+
+
+
+<p>If you’re implementing a webhook receiver for Fizzy &#8211; this is the spec.</p>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>Supported Webhook Actions</h2>
+
+
+
+<p>Webhooks can subscribe to a specific set of event types. Fizzy sends a separate request for each event that occurs on the board the webhook belongs to.</p>
+
+
+
+<p>Supported actions:</p>
+
+
+
+<ul><li>
+<code>card_published</code> — card created or published (drafts only fire when published)
+</li><li>
+<code>card_assigned</code> / <code>card_unassigned</code> — a user added to or removed from a card
+</li><li>
+<code>card_closed</code> / <code>card_reopened</code> — moved to or from “Done”
+</li><li>
+<code>card_postponed</code> / <code>card_auto_postponed</code> — moved to “Not Now”, manually or by entropy
+</li><li>
+<code>card_triaged</code> — placed into a column after triage
+</li><li>
+<code>card_sent_back_to_triage</code> — returned to “Maybe?”
+</li><li>
+<code>card_board_changed</code> — moved to a different board
+</li><li>
+<code>comment_created</code> — non-system user posts a comment
+</li></ul>
+
+
+
+<p>Only events from the webhook’s own board are delivered. If a webhook becomes inactive, Fizzy skips it.</p>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>Request Envelope &amp; Delivery Behavior</h2>
+
+
+
+<p>Every webhook delivery is a POST request with predictable headers and a signing mechanism.</p>
+
+
+
+<h3>HTTP Method</h3>
+
+
+
+<p><code>POST</code> to your configured webhook URL.</p>
+
+
+
+<h3>Headers</h3>
+
+
+
+<ul><li>
+<code>User-Agent: fizzy/1.0.0 Webhook</code>
+</li><li>
+<code>Content-Type</code>: varies by endpoint type (JSON / Slack / Campfire / HTML)
+</li><li>
+<code>X-Webhook-Signature</code>: hex HMAC-SHA256 of the <strong>raw</strong> request body
+</li><li>
+<code>X-Webhook-Timestamp</code>: UTC timestamp when the event was created
+</li></ul>
+
+
+
+<h3>Security &amp; Timeouts</h3>
+
+
+
+<ul><li>
+DNS timeout: 2 seconds
+</li><li>
+Connect/read timeout: 7 seconds
+</li><li>
+Requests to private/loopback/link-local/broadcast addresses are blocked
+</li></ul>
+
+
+
+<h3>Delivery Success Criteria</h3>
+
+
+
+<p>A delivery counts as <strong>successful</strong> only when your endpoint returns a <strong>2xx</strong> HTTP status.</p>
+
+
+
+<p>Failures are logged. If a webhook accumulates <strong>10 consecutive failures within one hour</strong>, Fizzy automatically deactivates it to prevent endless retries.</p>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>Verifying Signatures</h2>
+
+
+
+<p>Fizzy signs the <strong>exact raw request body</strong> using the webhook’s <code>signing_secret</code>.<br>
+Example verification in Ruby:</p>
+
+
+
+<pre class="wp-block-code"><code>payload = request.raw_post
+timestamp = request.headers["X-Webhook-Timestamp"]
+signature = request.headers["X-Webhook-Signature"]
+
+expected = OpenSSL::HMAC.hexdigest("SHA256", signing_secret, payload)
+ActiveSupport::SecurityUtils.secure_compare(signature, expected)
+</code></pre>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>Payload Formats</h2>
+
+
+
+<p>Fizzy supports four output formats, depending on the webhook URL pattern.</p>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>1) Generic JSON (Default)</h2>
+
+
+
+<p>This is used for any non-Slack, non-Campfire/Basecamp URL.</p>
+
+
+
+<p><code>Content-Type: application/json</code></p>
+
+
+
+<p>Example (<code>card_published</code>):</p>
+
+
+
+<pre class="wp-block-preformatted"></pre>
+
+
+
+<pre class="wp-block-code"><code>{
+  "id": "evt_123",
+  "action": "card_published",
+  "created_at": "2024-05-01T15:04:05Z",
+  "eventable": {
+    "id": "card_456",
+    "title": "Logo refresh",
+    "status": "published",
+    "image_url": null,
+    "golden": false,
+    "last_active_at": "2024-05-01T15:04:05Z",
+    "created_at": "2024-04-29T10:00:00Z",
+    "url": "https://fizzy.localhost:3006/1234567/cards/42",
+    "board": {
+      "id": "brd_1",
+      "name": "Brand",
+      "all_access": true,
+      "created_at": "2024-04-01T12:00:00Z",
+      "creator": {
+        "id": "usr_1",
+        "name": "David",
+        "role": "owner",
+        "active": true,
+        "email_address": "david@example.com",
+        "created_at": "2024-03-01T12:00:00Z",
+        "url": "https://fizzy.localhost:3006/1234567/users/usr_1"
+      }
+    },
+    "column": null,
+    "creator": {
+      "id": "usr_1",
+      "name": "David",
+      "role": "owner",
+      "active": true,
+      "email_address": "david@example.com",
+      "created_at": "2024-03-01T12:00:00Z",
+      "url": "https://fizzy.localhost:3006/1234567/users/usr_1"
+    }
+  },
+  "board": { "...same as above..." },
+  "creator": { "...event initiator..." }
+}
+</code></pre>
+
+
+
+<h3>Card Fields</h3>
+
+
+
+<p>Match Fizzy’s internal card serializer:</p>
+
+
+
+<ul><li>
+<code>id</code>, <code>title</code>, <code>status</code> (<code>drafted</code> or <code>published</code>)
+</li><li>
+<code>image_url</code> (nullable)
+</li><li>
+<code>golden</code> boolean flag
+</li><li>
+<code>last_active_at</code>, <code>created_at</code>
+</li><li>
+<code>url</code>
+</li><li>
+<code>board</code> (nested summary)
+</li><li>
+<code>column</code> (or <code>null</code>)
+</li><li>
+<code>creator</code> (user summary)
+</li></ul>
+
+
+
+<h3>Comment Fields</h3>
+
+
+
+<p>When <code>action: "comment_created"</code>, the <code>eventable</code> object contains:</p>
+
+
+
+<ul><li>
+<code>id</code>
+</li><li>
+timestamps
+</li><li>
+<code>body.plain_text</code> and <code>body.html</code>
+</li><li>
+<code>creator</code>
+</li><li>
+<code>reactions_url</code>
+</li><li>
+<code>url</code>
+</li></ul>
+
+
+
+<h3>Notes</h3>
+
+
+
+<ul><li> Specific “particulars” (e.g., <em>which user</em> was assigned/unassigned) are <strong>not included</strong> — clients should re-fetch the card for detailed context. </li><li> URLs include the account slug to support multi-tenancy. </li><li>The column information is added only when there is something happening which is based on column (like changing the column).</li></ul>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>2) Slack-Compatible Format</h2>
+
+
+
+<p>Triggered when the webhook URL matches:</p>
+
+
+
+<pre class="wp-block-code"><code>https://hooks.slack.com/services/...
+</code></pre>
+
+
+
+<p><code>Content-Type: application/json</code></p>
+
+
+
+<p>Body:</p>
+
+
+
+<pre class="wp-block-code"><code>{ "text": "&lt;mrkdwn text>" }
+</code></pre>
+
+
+
+<p>Conversion rules:</p>
+
+
+
+<ul><li>
+HTML → Slack mrkdwn
+</li><li>
+<code>&lt;a href="url"&gt;text&lt;/a&gt;</code> → <code>&lt;url|text&gt;</code>
+</li><li>
+<code>&lt;b&gt;</code> → <code>*bold*</code>
+</li><li>
+<code>&lt;i&gt;</code> → <code>_italic_</code>
+</li><li>
+All other HTML stripped
+</li></ul>
+
+
+
+<p>Example output:</p>
+
+
+
+<pre class="wp-block-code"><code>David added Logo refresh &#x2197;︎ https://fizzy.localhost:3006/1234567/cards/42
+</code></pre>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>3) Basecamp Campfire (Chat Line)</h2>
+
+
+
+<p>Recognized when the URL matches:</p>
+
+
+
+<pre class="wp-block-code"><code>/\d+/integrations/[^/]+/buckets/\d+/chats/\d+/lines
+</code></pre>
+
+
+
+<p><code>Content-Type: application/x-www-form-urlencoded</code></p>
+
+
+
+<p>Body:</p>
+
+
+
+<pre class="wp-block-code"><code>content=&lt;html_snippet>
+</code></pre>
+
+
+
+<p>The snippet is the same HTML described below, URL-encoded.</p>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>4) Campfire-Compatible HTML</h2>
+
+
+
+<p>Matched when the URL resembles:</p>
+
+
+
+<pre class="wp-block-code"><code>/rooms/\d+/\d+-[^/]+/messages
+</code></pre>
+
+
+
+<p><code>Content-Type: text/html</code></p>
+
+
+
+<p>Body: raw HTML snippet.</p>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>HTML Template (Shared by Slack / Basecamp / Campfire)</h2>
+
+
+
+<p>Rendered from <code>app/views/webhooks/event.html.erb</code>:</p>
+
+
+
+<pre class="wp-block-code"><code>&lt;plain sentence about the event>
+&lt;a href="https://...">&#x2197;︎&lt;/a>
+</code></pre>
+
+
+
+<p>Rules:</p>
+
+
+
+<ul><li>
+Sentences come from <code>Event::Description</code>
+</li><li>
+Personalized when Fizzy knows the acting user (“You added…”)
+</li><li>
+Comments use “{creator} commented on {card title}”
+</li><li>
+Link points to the card or comment URL
+</li></ul>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>Delivery Flow Overview</h2>
+
+
+
+<p>Inside Fizzy:</p>
+
+
+
+<ol><li>
+Cards and comments emit events through the <code>Eventable</code> concern
+</li><li>
+<code>Event::WebhookDispatchJob</code> identifies relevant active webhooks
+</li><li>
+Each webhook delivery is enqueued as a <code>Webhook::Delivery</code>
+</li><li>
+<code>Webhook::DeliveryJob</code> sends the request, records metadata, and handles success/failure
+</li><li>
+Excessive failures deactivate the webhook automatically
+</li></ol>
+
+
+
+<p>This keeps webhook delivery reliable and auditable without blocking the main application.</p>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>Final Notes</h2>
+
+
+
+<p>This post should serve as a complete, implementable reference until official documentation appears. If you’re building integrations &#8211; Slack apps, internal automations, reporting scripts, or custom activity feeds, this covers everything Fizzy emits today.</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/fizzy-webhooks-documentation/">The missing Webhooks documentation for Fizzy</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+									<post-id xmlns="com-wordpress:feed-additions:1">235</post-id>	</item>
+		<item>
+		<title>Solid Trifecta + Kamal + Postgres don&#8217;t play along nice, this is the way to fix it</title>
+		<link>https://www.pilanites.com/kamal-pg/</link>
+				<pubDate>Tue, 04 Nov 2025 07:35:48 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[developers]]></category>
+		<category><![CDATA[rails]]></category>
+		<category><![CDATA[kamal]]></category>
+		<category><![CDATA[ruby]]></category>
+
+		<guid isPermaLink="false">https://www.pilanites.com/?p=227</guid>
+				<description><![CDATA[<p>When you deploy a fresh Rails 8 app with the Solid “trifecta” (Solid Cache, Solid Queue, Solid Cable), you actually have four database connections in production: primary, cache, queue, and cable. If only `DATABASE_URL` is set, the other three try to connect via the default...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/kamal-pg/">Solid Trifecta + Kamal + Postgres don&#8217;t play along nice, this is the way to fix it</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[
+<p>When you deploy a fresh Rails 8 app with the Solid “trifecta” (Solid Cache, Solid Queue, Solid Cable), you actually have <strong>four</strong> database connections in production: <em>primary</em>, <em>cache</em>, <em>queue</em>, and <em>cable</em>. If only `<em>DATABASE_URL</em>` is set, the other three try to connect via the default local socket and you’ll see:</p>
+
+
+
+<pre class="wp-block-code"><code>bin/rails aborted!
+ActiveRecord::ConnectionNotEstablished: connection to server on socket "/var/run/postgresql/.s.PGSQL.5432" failed: No such file or directory
+...
+Tasks: TOP => db:prepare</code></pre>
+
+
+
+<p>The fix is to <strong>explicitly configure all Solid DBs</strong> and run their migrations.</p>
+
+
+
+<h3>1) Wire up all four database URLs</h3>
+
+
+
+<p>Use distinct URLs, or point them all to the same Postgres if that’s fine for your scale.</p>
+
+
+
+<p><em>config/database.yml</em> (production)</p>
+
+
+
+<pre class="wp-block-code"><code>production:
+  primary:
+    url: &lt;%= ENV["PRIMARY_DATABASE_URL"] || ENV["DATABASE_URL"] %>
+
+  cache:
+    url: &lt;%= ENV["CACHE_DATABASE_URL"] || ENV["DATABASE_URL"] %>
+    migrations_paths: db/cache_migrate
+
+  queue:
+    url: &lt;%= ENV["QUEUE_DATABASE_URL"] || ENV["DATABASE_URL"] %>
+    migrations_paths: db/queue_migrate
+
+  cable:
+    url: &lt;%= ENV["CABLE_DATABASE_URL"] || ENV["DATABASE_URL"] %></code></pre>
+
+
+
+<p>Rails 8 treats cache/queue/cable as separate DB configs; providing <em>CACHE_DATABASE_URL</em>, <em>QUEUE_DATABASE_URL</em>, and <em>CABLE_DATABASE_URL</em> (or falling back to <em>DATABASE_URL</em>) prevents the “local socket” miss.</p>
+
+
+
+<p>Kamal <em>deploy.yml</em> snippet:</p>
+
+
+
+<pre class="wp-block-code"><code>env:
+  clear:
+    RAILS_ENV: production
+  secret:
+    - DATABASE_URL
+    - PRIMARY_DATABASE_URL
+    - CACHE_DATABASE_URL
+    - QUEUE_DATABASE_URL
+    - CABLE_DATABASE_URL</code></pre>
+
+
+
+<p>(If you’re running a Postgres accessory with Kamal, ensure these URLs point at that service, not a local socket.)</p>
+
+
+
+<h3>2) Install Solid components (if not already)</h3>
+
+
+
+<p>These tasks create the right schema/migration paths.</p>
+
+
+
+<pre class="wp-block-code"><code>bin/rails solid_cache:install
+bin/rails solid_queue:install
+bin/rails solid_cable:install</code></pre>
+
+
+
+<ul><li>Cache/Queue create migration paths under <code>db/cache_migrate</code> and <code>db/queue_migrate</code>.</li><li>Cable creates <code>db/cable_schema.rb</code> and requires a DB entry.</li></ul>
+
+
+
+<h3>3) Commit a migration for cache/queue (don’t rely only on schema dumps)</h3>
+
+
+
+<p>Add an explicit migration under each path so <code>db:prepare</code> can apply them in production:</p>
+
+
+
+<pre class="wp-block-code"><code>bin/rails g migration InitSolidCache --migration_path=db/cache_migrate
+bin/rails g migration InitSolidQueue --migration_path=db/queue_migrate</code></pre>
+
+
+
+<p>Paste the table definitions from your local generated schema files (or re-run the install tasks locally and copy the structure). Then:</p>
+
+
+
+<pre class="wp-block-code"><code>bin/rails db:prepare</code></pre>
+
+
+
+<p>This guarantees the cache and queue tables exist in the target DB(s), just like your primary.</p>
+
+
+
+<h3>4) (Option) Keep it simple: one Postgres for all four</h3>
+
+
+
+<p>For small apps, it’s perfectly fine to point <code>primary</code>, <code>cache</code>, <code>queue</code>, and <code>cable</code> to the <strong>same</strong> Postgres and split them out later as load grows. Update the four entries in <code>database.yml</code> to all use <code>ENV["DATABASE_URL"]</code>.</p>
+
+
+
+<h3>Why this happens</h3>
+
+
+
+<p>Rails 8 defaults to multi-DB for Solid Cache/Queue/Cable. PaaS/Kamal setups commonly only export <code>DATABASE_URL</code>. Without explicit URLs, the Solid DBs fall back to a local socket path (<code>/var/run/postgresql/...</code>), which doesn’t exist in your container, hence <code>ConnectionNotEstablished</code>. Setting <code>*_DATABASE_URL</code> (or wiring <code>database.yml</code> to reuse <code>DATABASE_URL</code>) aligns all four connections with your actual Postgres.</p>
+
+
+
+<h3>Quick Checklist (made by AI)</h3>
+
+
+
+<p>[ ] <code>database.yml</code> has <code>primary/cache/queue/cable</code> with URLs <br>[ ] Env has <code>CACHE_DATABASE_URL</code>, <code>QUEUE_DATABASE_URL</code>, <code>CABLE_DATABASE_URL</code> (or they fall back to <code>DATABASE_URL</code>)<br>[ ] Ran <code>solid_cache:install</code>, <code>solid_queue:install</code>, <code>solid_cable:install</code> <br>[ ] Created/committed migrations under <code>db/cache_migrate</code> and <code>db/queue_migrate</code> * [ ] <code>bin/rails db:prepare</code> succeeds in the deploy container</p>
+
+
+
+<p>After this, Kamal deploys should boot cleanly without the Postgres socket error, and Hotwire/Action Cable plus jobs and cache will work as expected.</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/kamal-pg/">Solid Trifecta + Kamal + Postgres don&#8217;t play along nice, this is the way to fix it</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+									<post-id xmlns="com-wordpress:feed-additions:1">227</post-id>	</item>
+		<item>
+		<title>Why I am not going to attend Hackathons any more</title>
+		<link>https://www.pilanites.com/no-more-hackathons/</link>
+				<comments>https://www.pilanites.com/no-more-hackathons/#comments</comments>
+				<pubDate>Tue, 17 Apr 2018 10:02:51 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[developers]]></category>
+
+		<guid isPermaLink="false">https://www.pilanites.com/?p=212</guid>
+				<description><![CDATA[<p>There was a Hackathon by our local government a few days back and the whole situation was insane. They almost brought me to tears. It was a 36-hour Hackathon and it felt like torture for the participants. Some of them fainted, some of burned out,...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/no-more-hackathons/">Why I am not going to attend Hackathons any more</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<p>There was a Hackathon by our local government a few days back and the whole situation was insane. They almost brought me to tears.</p>
+<p>It was a 36-hour Hackathon and it felt like torture for the participants. Some of them fainted, some of burned out, and I could see the &#8220;passion for coding&#8221; vanish from their eyes.</p>
+<p>I had a follow-up discussion, two days after the event with the participants and most of them were of the opinion that they don&#8217;t want to code for some time. They burned out.</p>
+<p>Was it really worth it? If you kill yourself to haphazardly finish a project in X hours, and then burnout and be unproductive for the next month, is it really justified to do so?</p>
+<h2>Problems with Hackathons</h2>
+<p>1. <strong>The toxic culture</strong></p>
+<p>Hackathons promote a toxic culture where you&#8217;re supposed to write code because you&#8217;re passionate about coding, in a highly caffeinated, intoxicated environment. This not how you work daily, in a sustainable manner.</p>
+<p>You need proper sleep to work well, and create something worthwhile, of good quality.</p>
+<p>You need good food in your stomach, and a clear focused mind to complete your project.</p>
+<p>Hackathons are the exact opposite of these. They provide you with access to lots of Pizza, Beer, and Coffee. Alcohol and Caffeine might help you focus in the short term, but they are diuretics and you lose more water in the long term.</p>
+<p>2. <strong>Exclusive</strong></p>
+<p>It&#8217;s not really inclusive because only young developers, with no responsibilities and ample of free time can manage to participate.</p>
+<p>Women tasked with the household responsibility won&#8217;t be able to participate. Senior developers, with kids waiting for them don&#8217;t participate. Developers with back-pain, who are not allowed to sit for a long time, won&#8217;t participate.</p>
+<p>Only the naive junior developers, with no previous burnout experience are the people I&#8217;ve seen participating and enjoying Hackathons.</p>
+<p>3. <strong>Social and distractions<br />
+</strong></p>
+<p>I can either code or I can be social and meet other people. I can&#8217;t do both at the same time, or else I won&#8217;t be able to do anything well.</p>
+<p>If you want me to socialize, create a social event where expectations are clear, and if you want me to code, create a distraction free environment. The current system doesn&#8217;t give me the freedom to focus on anything, consequently making it a waste of time.</p>
+<h2>In conclusion</h2>
+<p>Hackathons really screw up your health and lead you to a burnout, mess with you sleep cycles, and create bad code quality. Most of the projects made in a hackathon go nowhere.</p>
+<p>As I start getting older (and hopefully wiser), I realize that a sustainable work rate is always better than this burst of code.</p>
+<p>Hackathon&#8217;s most powerful idea is to do focused work on something other than your daily job. I think that&#8217;s Hackathon organizers should embrace that, but their motives are very different.</p>
+<p>A Hackathon I&#8217;d like to organize would give people time constraint, and allow them to do other things during the event. Work for 8 hours on a new thing, and then done, go home.</p>
+<p>After all, Hackathons are a wordplay on Marathons, then why do they feel like an unsustainable sprint?</p>
+<p>Comments on <a href="https://www.reddit.com/r/programming/comments/8cvfuv/why_i_am_not_going_to_attend_hackathons_any_more/">Reddit</a>.</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/no-more-hackathons/">Why I am not going to attend Hackathons any more</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+							<wfw:commentRss>https://www.pilanites.com/no-more-hackathons/feed/</wfw:commentRss>
+		<slash:comments>4</slash:comments>
+						<post-id xmlns="com-wordpress:feed-additions:1">212</post-id>	</item>
+	</channel>
+</rss>

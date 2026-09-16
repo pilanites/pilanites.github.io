@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ .Title }} · {{ .Site.Title }}</title>
+    {{ with .Params.description }}<meta name="description" content="{{ . }}">{{ end }}
+    <link rel="canonical" href="{{ .Permalink }}">
+    <style>
+      body { max-width: 46rem; margin: 3rem auto; padding: 0 1.25rem; color: #252525; font: 18px/1.65 Georgia, serif; }
+      a { color: #247ba0; } h1, h2, h3 { line-height: 1.2; } pre { overflow: auto; padding: 1rem; background: #f5f5f5; }
+      .meta { color: #666; font: 0.9rem system-ui, sans-serif; }
+    </style>
+  </head>
+  <body>
+    <p><a href="/">PILANITES</a> · <a href="/posts/">New posts</a></p>
+    <article>
+      <h1>{{ .Title }}</h1>
+      <p class="meta"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time></p>
+      {{ .Content }}
+    </article>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+# Private migration artifacts. These can include database credentials and must
+# never be committed to the public GitHub Pages repository.
+/private-backup/
+/.build/
+/public/
+/.hugo_build.lock
+
+# Internal migration brief; the site repository contains only public archive files.
+/PILANITES.md
