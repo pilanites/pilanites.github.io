@@ -19,8 +19,17 @@ hugo --minify
 ```
 
 Hugo copies the preserved archive from `static/` and writes the complete
-deployable site to `public/`. New Markdown posts are published at clean URLs,
-such as `/my-new-post/`, and appear at `/posts/`.
+deployable site to `public/`. GitHub Pages currently serves the repository's
+`main` branch directly, so sync that generated output to the repository root
+before committing:
+
+```sh
+scripts/publish-static-output.sh
+git add . && git commit -m "Publish my new post" && git push
+```
+
+New Markdown posts are published at clean URLs, such as `/my-new-post/`, and
+appear at `/posts/`.
 
 For a local preview:
 

@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	
+xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+>
+
+<channel>
+	<title>streaks &#8211; Pilanites</title>
+	<atom:link href="https://www.pilanites.com/category/streaks/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.pilanites.com</link>
+	<description>Business of Online Products</description>
+	<lastBuildDate>
+	Fri, 05 Dec 2025 14:13:45 +0000	</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.1.24</generator>
+
+<image>
+	<url>https://i0.wp.com/www.pilanites.com/wp-content/uploads/2016/06/cropped-lotucrocket.png?fit=32%2C32&#038;ssl=1</url>
+	<title>streaks &#8211; Pilanites</title>
+	<link>https://www.pilanites.com</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">35050694</site>	<item>
+		<title>Android Account Manager: Introduction and Basic Implementation</title>
+		<link>https://www.pilanites.com/android-account-manager/</link>
+				<comments>https://www.pilanites.com/android-account-manager/#comments</comments>
+				<pubDate>Thu, 10 Nov 2016 12:38:55 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[streaks]]></category>
+
+		<guid isPermaLink="false">http://www.pilanites.com/?p=76</guid>
+				<description><![CDATA[<p>Recently I had to implement an online sync facility for my habit tracker app. As it goes with every online service, you needed an account to take it&#8217;s advantage. Enter the Android Account Manager. Now, if you are an advanced user of Android phones (and...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/android-account-manager/">Android Account Manager: Introduction and Basic Implementation</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<style>
+.wp_syntax pre { background:#F9F9F9 !important; }<br />.wp_syntax td.code { background-image:none; background-color:none; }<br /></style>
+<p>Recently I had to implement an online sync facility for my <a href="http://www.pilanites.com/streaks">habit tracker app</a>. As it goes with every online service, you needed an account to take it&#8217;s advantage. Enter the Android Account Manager.</p>
+<p>Now, if you are an advanced user of Android phones (and since you&#8217;re reading this, you most certainly are), you must have seen an &#8220;Accounts&#8221; section in phone Settings.</p>
+<p>Upon clicking that, you&#8217;ll find your accounts related to apps on your phone.</p>
+<p>I wanted to utilize this built-in <code>AccountManager</code> functionality to store and authenticate user&#8217;s credentials because it works like a charm with the built-in sync mechanism (using the <code>SyncAdapter</code>).</p>
+<p>But we are getting ahead of ourselves here. Let&#8217;s start with the authentication system for server.</p>
+<h3>Authentication system</h3>
+<p>Our system authenticates users based on email and password combo. If the combo is correct, server returns an <code>auth_token</code> which are valid until the user logs out. This is your normal token based authentication where the token lives forever and has all the permissions as the user itself.</p>
+<figure style="width: 1058px" class="wp-caption aligncenter"><img src="https://i2.wp.com/i.imgur.com/TA2P26h.png?resize=640%2C259" alt="Android Account Manager's Relationship with Server" width="640" height="259" data-recalc-dims="1" /><figcaption class="wp-caption-text">A small overview of implementation</figcaption></figure>
+<p>Every device creates a new <code>auth_token</code> for itself because it makes it easy to log the device, limit the number of clients for an account.</p>
+<p>This was fairly easy to implement on the server side by adding fields for <code>auth_token</code> in <code>Device</code> model. Simply create a new <code>Device</code> whenever user logs in or registers, populating that <code>auth_token</code> field to a random value.</p>
+<h2>Creating account on the phone via the Android Account Manager</h2>
+<p>Till now, we had discussed the how to create account on server, and how it interacts with the client. Let&#8217;s move on to the meat of this post, creating account using <code>AccountManager</code>.</p>
+<h3>Wait, what&#8217;s AccountManager? And why should we use it?</h3>
+<p>More specifically, why not store the credentials using <code>SharedPreference</code> and have full control without wasting time on this?</p>
+<p>The great thing with <code>AccountManager</code> is that it solves the corner cases, and little small details with ease, which you might forget to account for. It really shines well when you&#8217;re using <code>OAuth2</code> and need to fetch a new token when the current one expires.</p>
+<p>There are many more benefits to using <code>AccountManager</code> but going through all of them is a little too much. I&#8217;ll add the links in comments if you ask for them. <img src="https://s.w.org/images/core/emoji/11.2.0/72x72/1f642.png" alt="🙂" class="wp-smiley" style="height: 1em; max-height: 1em;" /></p>
+<p>A more in-depth look at <code>AccountManager</code> can be found <a href="http://blog.udinic.com/2013/04/24/write-your-own-android-authenticator/">here</a>.</p>
+<p>We&#8217;ll be using it to store the user credentials and <code>auth_token</code>.</p>
+<h3>Things we need to support</h3>
+<ol>
+<li>Users can add an account</li>
+<li>They can sync their data</li>
+<li>They can log out of their account</li>
+</ol>
+<p>Pretty simple and straightforward.</p>
+<h3>Flow and important terms</h3>
+<p>Before we look at the code, let&#8217;s talk about the workflow.</p>
+<p>When the app tries to access an account, and it&#8217;s <code>auth_token</code>, this is how it goes :-</p>
+<ul>
+<li>The app asks the <code>AccountManager</code> for an <code>auth_token</code>.</li>
+<li>The <code>AccountManager</code> asks the <code>AccountAuthenticator</code> whether it has a token</li>
+<li>If it has none, it shows the user an <code>AccountsActivity</code> through which the user logs in</li>
+<li>The user logs in after which the app obtains the <code>auth_token</code> from server</li>
+<li>The <code>auth_token</code> is stored by the <code>AccountManager</code> for any future use which it returns the next time app asks for it</li>
+</ul>
+<p>The good thing about using <code>AccountManager</code> is that system will start the correct activities and handle most of the corner cases we as developers get lazy about.</p>
+<p>This assures us that we&#8217;ll have a valid <code>auth_token</code> while syncing, so we can avoid <a href="https://en.wikipedia.org/wiki/Defensive_programming">defensive programming</a>.</p>
+<h3>Building our Authenticator</h3>
+<p>Authenticator is the class which <code>AccountManager</code> uses to handle our account related tasks like storing the <code>auth_token</code> or account password.</p>
+<p>The first thing you need to do is extend the <a href="http://developer.android.com/reference/android/accounts/AbstractAccountAuthenticator.html"><code>AbstractAccountAuthenticator</code></a> and implement its methods to create our Authenticator.</p>
+<p>You may decide to implement all the methods, or just leave out some by having them throw an <code>UnsupportedOperationException</code>. You will, however need to implement the <code>addAccount</code> method to allow users to add an account in the system.</p>
+<pre lang="Java">@Override
+public Bundle addAccount(AccountAuthenticatorResponse response,
+                         String accountType, String authTokenType,
+                         String[] requiredFeatures, Bundle options) throws NetworkErrorException {
+
+    final Intent intent = new Intent(mContext, AccountsActivity.class);
+
+    // This key can be anything. Try to use your domain/package
+    intent.putExtra("YOUR ACCOUNT TYPE", accountType);
+
+    // This key can be anything too. It's just a way of identifying the token's type (used when there are multiple permissions)
+    intent.putExtra("full_access", authTokenType);
+
+    // This key can be anything too. Used for your reference. Can skip it too.
+    intent.putExtra("is_adding_new_account", true);
+
+    // Copy this exactly from the line below.
+    intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
+
+    final Bundle bundle = new Bundle();
+    bundle.putParcelable(AccountManager.KEY_INTENT, intent);
+
+    return bundle;
+}
+</pre>
+<p>Another method you should implement is <code>getAuthToken</code>. This method allows your <code>SyncAdapter</code>, and really your whole app, to acquire the <code>auth_token</code> for making network calls.</p>
+<p>This is how I&#8217;ve implemented it.</p>
+<pre lang="Java">@Override
+public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle bundle) throws NetworkErrorException {
+    
+    AccountManager am = AccountManager.get(mContext);
+
+    String authToken = am.peekAuthToken(account, authTokenType);
+
+    if (TextUtils.isEmpty(authToken)) {
+        authToken = HTTPNetwork.login(account.name, am.getPassword(account));
+    }
+
+
+    if (!TextUtils.isEmpty(authToken)) {
+        final Bundle result = new Bundle();
+        result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
+        result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
+        result.putString(AccountManager.KEY_AUTHTOKEN, authToken);
+        return result;
+    }
+
+    // If you reach here, person needs to login again. or sign up
+
+    // If we get here, then we couldn't access the user's password - so we
+    // need to re-prompt them for their credentials. We do that by creating
+    // an intent to display our AuthenticatorActivity which is the AccountsActivity in my case.
+    final Intent intent = new Intent(mContext, AccountsActivity.class);
+    intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
+    intent.putExtra("YOUR ACCOUNT TYPE", account.type);
+    intent.putExtra("full_access", authTokenType);
+
+    Bundle retBundle = new Bundle();
+    retBundle.putParcelable(AccountManager.KEY_INTENT, intent);
+    return retBundle;
+
+}
+</pre>
+<p>This <em>kind of</em> completes the Authenticator, at least for our purposes. You can have a look at the entire file by visiting this <a href="https://gist.github.com/shobhitic/c58b3f1e348ad06a38f91ed9687e929c">gist for Authenticator.java</a>.</p>
+<h3>Building the Authentication Activity</h3>
+<p>Now, you must have noticed that there is an <code>AccountsActivity</code> here. This is a special activity which is shown to the user whenever they have to login for <code>Authenticator</code> to get token.</p>
+<p>Create the activity as you normally would, making network calls, validations and everything else normally. When you wish to add the credentials to Accounts, use a method like the one below.</p>
+<pre lang="Java">public void createAccount(String email, String password, String authToken) {
+    Account account = new Account(email, "YOUR ACCOUNT TYPE");
+
+    AccountManager am = AccountManager.get(this);
+    am.addAccountExplicitly(account, password, null);
+    am.setAuthToken(account, "full_access", authToken);
+}
+</pre>
+<p>This will create the account for you to use.</p>
+<h3>Building the Authentication Service</h3>
+<p>At this point, the Activity will be ready but we haven&#8217;t registered our <code>Authenticator</code> with the system.</p>
+<p>To do that, we&#8217;ll have to define an <code>AuthenticatorService</code> and register it in the Manifest file with special filter and meta-data.</p>
+<p>The service is pretty simple (<a href="https://gist.github.com/shobhitic/c58b3f1e348ad06a38f91ed9687e929c#file-authenticatorservice-java">link</a>) and looks like:-</p>
+<pre lang="Java">public class AuthenticatorService extends Service {
+    // Instance field that stores the authenticator object
+    // Notice, this is the same Authenticator class we defined earlier
+    private Authenticator mAuthenticator;
+    @Override
+    public void onCreate() {
+        // Create a new authenticator object
+        mAuthenticator = new Authenticator(this);
+    }
+    /*
+     * When the system binds to this Service to make the RPC call
+     * return the authenticator's IBinder.
+     */
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mAuthenticator.getIBinder();
+    }
+}
+</pre>
+<p>After making this we need to declare this service in Manifest with appropriate tags.</p>
+<pre lang="xml" escaped="true">&lt;service
+            android:name="com.example.AuthenticatorService"
+            android:enabled="true"
+            android:exported="true"&gt;
+            &lt;intent-filter&gt;
+                &lt;action android:name="android.accounts.AccountAuthenticator" /&gt;
+            &lt;/intent-filter&gt;
+
+            &lt;meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" /&gt; &lt;!-- We haven't defined this --&gt;
+&lt;/service&gt;
+</pre>
+<p>If you notice the <code>meta-data</code> tag there, you&#8217;ll find <code>android:resource</code>&#8216;s value something which hasn&#8217;t been defined before. This xml file is important because it lets the system know how to represent your app in the settings.</p>
+<p>Create a folder named <code>xml</code> in the <code>res</code> folder. In that folder, make a new file named <code>authenticator.xml</code> (name can be anything, as long as you specify it in the Manifest file). The contents of that file for my project looks like this:-</p>
+<pre lang="xml" escaped="true">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="@string/account_type"
+    android:icon="@drawable/ic_launcher"
+    android:label="@string/app_name"
+android:smallIcon="@drawable/ic_launcher" /&gt;
+</pre>
+<p>Most of these values would have been already defined by you, except the <code>account_type</code> which needs to be the same as the one your provided earlier (we have used <code>"YOUR ACCOUNT TYPE"</code> as placeholder).</p>
+<p>And that&#8217;s it!</p>
+<p>This will let you create a very basic version of app supporting the accounts in your system. Look how good our app&#8217;s name looks in Account&#8217;s screen <img src="https://s.w.org/images/core/emoji/11.2.0/72x72/1f61b.png" alt="😛" class="wp-smiley" style="height: 1em; max-height: 1em;" /></p>
+<figure style="width: 720px" class="wp-caption aligncenter"><img class="size-medium" src="https://i1.wp.com/i.imgur.com/gwwPyq4.png?resize=640%2C1138&#038;ssl=1" alt="Our app seen with other apps in Android Account Manager" width="640" height="1138" data-recalc-dims="1" /><figcaption class="wp-caption-text">Look at Streaks sitting there with other apps</figcaption></figure>
+<p>To access your user&#8217;s account, all you will need to do is</p>
+<pre lang="Java">AccountManager accountManager = AccountManager.get(context);
+Account[] accounts = accountManager.getAccountsByType(AccountConstants.ACCOUNT_TYPE);
+// Use accounts[0] (or whatever number of account) after checking that accounts.length &gt; 1
+</pre>
+<p>That wraps up our introduction to creating an account in system. If you want a detailed information about what other things are possible, check out <a href="http://blog.udinic.com/2013/04/24/write-your-own-android-authenticator/">udinic&#8217;s post</a> which is an excellent but overwhelming resource.</p>
+<p>I urge you to leave a comment here if you have any questions or tweet them to me, <a href="https://twitter.com/shobhitic">@shobhitic</a>.</p>
+<p>Next week, I&#8217;ll be creating a <code>SyncAdapter</code> which uses this Account for communication. If you&#8217;d like to hear about that, sign up for my email list.</p>
+<p>(The post is here &#8211; <a href="http://www.pilanites.com/android-sync-adapter/">Android Sync Adapter</a>)</p>
+<p>&nbsp;</p>
+<hr />
+<p><!-- Begin MailChimp Signup Form --></p>
+<style type="text/css">
+	#mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }<br />	/* Add your own MailChimp form style overrides in your site stylesheet or in this style block.<br />	   We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */<br /></style>
+<div id="mc_embed_signup">
+<form id="mc-embedded-subscribe-form" class="validate" action="//pilanites.us8.list-manage.com/subscribe/post?u=307c2721bdd03e12f241c1707&amp;id=9a6f5efe13" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+<div id="mc_embed_signup_scroll">
+<h2>Want these posts in your inbox?</h2>
+<div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
+<div class="mc-field-group"><label for="mce-EMAIL">Email Address <span class="asterisk">*</span><br />
+</label><br />
+<input id="mce-EMAIL" class="required email" name="EMAIL" type="email" value="" /></div>
+<div class="mc-field-group"><label for="mce-NAME">First Name </label><br />
+<input id="mce-NAME" class="" name="NAME" type="text" value="" /></div>
+<div id="mce-responses" class="clear"></div>
+<p><!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups--></p>
+<div style="position: absolute; left: -5000px;"><input tabindex="-1" name="b_307c2721bdd03e12f241c1707_9a6f5efe13" type="text" value="" /></div>
+<div class="clear"><input id="mc-embedded-subscribe" class="button" name="subscribe" type="submit" value="Subscribe" /></div>
+</div>
+</form>
+</div>
+<p><!--End mc_embed_signup--></p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/android-account-manager/">Android Account Manager: Introduction and Basic Implementation</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+							<wfw:commentRss>https://www.pilanites.com/android-account-manager/feed/</wfw:commentRss>
+		<slash:comments>31</slash:comments>
+						<post-id xmlns="com-wordpress:feed-additions:1">76</post-id>	</item>
+	</channel>
+</rss>

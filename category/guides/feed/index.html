@@ -1,0 +1,775 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	
+xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+>
+
+<channel>
+	<title>guides &#8211; Pilanites</title>
+	<atom:link href="https://www.pilanites.com/category/guides/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.pilanites.com</link>
+	<description>Business of Online Products</description>
+	<lastBuildDate>
+	Fri, 05 Dec 2025 14:13:45 +0000	</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.1.24</generator>
+
+<image>
+	<url>https://i0.wp.com/www.pilanites.com/wp-content/uploads/2016/06/cropped-lotucrocket.png?fit=32%2C32&#038;ssl=1</url>
+	<title>guides &#8211; Pilanites</title>
+	<link>https://www.pilanites.com</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">35050694</site>	<item>
+		<title>The missing Webhooks documentation for Fizzy</title>
+		<link>https://www.pilanites.com/fizzy-webhooks-documentation/</link>
+				<pubDate>Fri, 05 Dec 2025 14:13:14 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[developers]]></category>
+		<category><![CDATA[guides]]></category>
+
+		<guid isPermaLink="false">https://www.pilanites.com/?p=235</guid>
+				<description><![CDATA[<p>This the documentation I used to build bubblehook, a Fizzy webhook receiver that sends updates to Slack. I hope this is useful. The post is written by AI, with a lot of rough notes fed to it from my reading the code, and observing the...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/fizzy-webhooks-documentation/">The missing Webhooks documentation for Fizzy</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[
+<p>This the documentation I used to build <a href="https://bubblehook.com">bubblehook</a>, a Fizzy webhook receiver that sends updates to Slack. I hope this is useful. The post is written by AI, with a lot of rough notes fed to it from my reading the code, and observing the webhooks. Enjoy!</p>
+
+
+
+<p>Fizzy doesn’t currently publish full webhook documentation, so I’ve put together a complete reference for anyone building integrations, automations, or notifications around Fizzy boards. This guide covers every event Fizzy emits, how the webhook delivery works, how signatures are generated, and what the payloads look like in JSON, Slack, Campfire, and Basecamp formats.</p>
+
+
+
+<p>If you’re implementing a webhook receiver for Fizzy &#8211; this is the spec.</p>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>Supported Webhook Actions</h2>
+
+
+
+<p>Webhooks can subscribe to a specific set of event types. Fizzy sends a separate request for each event that occurs on the board the webhook belongs to.</p>
+
+
+
+<p>Supported actions:</p>
+
+
+
+<ul><li>
+<code>card_published</code> — card created or published (drafts only fire when published)
+</li><li>
+<code>card_assigned</code> / <code>card_unassigned</code> — a user added to or removed from a card
+</li><li>
+<code>card_closed</code> / <code>card_reopened</code> — moved to or from “Done”
+</li><li>
+<code>card_postponed</code> / <code>card_auto_postponed</code> — moved to “Not Now”, manually or by entropy
+</li><li>
+<code>card_triaged</code> — placed into a column after triage
+</li><li>
+<code>card_sent_back_to_triage</code> — returned to “Maybe?”
+</li><li>
+<code>card_board_changed</code> — moved to a different board
+</li><li>
+<code>comment_created</code> — non-system user posts a comment
+</li></ul>
+
+
+
+<p>Only events from the webhook’s own board are delivered. If a webhook becomes inactive, Fizzy skips it.</p>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>Request Envelope &amp; Delivery Behavior</h2>
+
+
+
+<p>Every webhook delivery is a POST request with predictable headers and a signing mechanism.</p>
+
+
+
+<h3>HTTP Method</h3>
+
+
+
+<p><code>POST</code> to your configured webhook URL.</p>
+
+
+
+<h3>Headers</h3>
+
+
+
+<ul><li>
+<code>User-Agent: fizzy/1.0.0 Webhook</code>
+</li><li>
+<code>Content-Type</code>: varies by endpoint type (JSON / Slack / Campfire / HTML)
+</li><li>
+<code>X-Webhook-Signature</code>: hex HMAC-SHA256 of the <strong>raw</strong> request body
+</li><li>
+<code>X-Webhook-Timestamp</code>: UTC timestamp when the event was created
+</li></ul>
+
+
+
+<h3>Security &amp; Timeouts</h3>
+
+
+
+<ul><li>
+DNS timeout: 2 seconds
+</li><li>
+Connect/read timeout: 7 seconds
+</li><li>
+Requests to private/loopback/link-local/broadcast addresses are blocked
+</li></ul>
+
+
+
+<h3>Delivery Success Criteria</h3>
+
+
+
+<p>A delivery counts as <strong>successful</strong> only when your endpoint returns a <strong>2xx</strong> HTTP status.</p>
+
+
+
+<p>Failures are logged. If a webhook accumulates <strong>10 consecutive failures within one hour</strong>, Fizzy automatically deactivates it to prevent endless retries.</p>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>Verifying Signatures</h2>
+
+
+
+<p>Fizzy signs the <strong>exact raw request body</strong> using the webhook’s <code>signing_secret</code>.<br>
+Example verification in Ruby:</p>
+
+
+
+<pre class="wp-block-code"><code>payload = request.raw_post
+timestamp = request.headers["X-Webhook-Timestamp"]
+signature = request.headers["X-Webhook-Signature"]
+
+expected = OpenSSL::HMAC.hexdigest("SHA256", signing_secret, payload)
+ActiveSupport::SecurityUtils.secure_compare(signature, expected)
+</code></pre>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>Payload Formats</h2>
+
+
+
+<p>Fizzy supports four output formats, depending on the webhook URL pattern.</p>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>1) Generic JSON (Default)</h2>
+
+
+
+<p>This is used for any non-Slack, non-Campfire/Basecamp URL.</p>
+
+
+
+<p><code>Content-Type: application/json</code></p>
+
+
+
+<p>Example (<code>card_published</code>):</p>
+
+
+
+<pre class="wp-block-preformatted"></pre>
+
+
+
+<pre class="wp-block-code"><code>{
+  "id": "evt_123",
+  "action": "card_published",
+  "created_at": "2024-05-01T15:04:05Z",
+  "eventable": {
+    "id": "card_456",
+    "title": "Logo refresh",
+    "status": "published",
+    "image_url": null,
+    "golden": false,
+    "last_active_at": "2024-05-01T15:04:05Z",
+    "created_at": "2024-04-29T10:00:00Z",
+    "url": "https://fizzy.localhost:3006/1234567/cards/42",
+    "board": {
+      "id": "brd_1",
+      "name": "Brand",
+      "all_access": true,
+      "created_at": "2024-04-01T12:00:00Z",
+      "creator": {
+        "id": "usr_1",
+        "name": "David",
+        "role": "owner",
+        "active": true,
+        "email_address": "david@example.com",
+        "created_at": "2024-03-01T12:00:00Z",
+        "url": "https://fizzy.localhost:3006/1234567/users/usr_1"
+      }
+    },
+    "column": null,
+    "creator": {
+      "id": "usr_1",
+      "name": "David",
+      "role": "owner",
+      "active": true,
+      "email_address": "david@example.com",
+      "created_at": "2024-03-01T12:00:00Z",
+      "url": "https://fizzy.localhost:3006/1234567/users/usr_1"
+    }
+  },
+  "board": { "...same as above..." },
+  "creator": { "...event initiator..." }
+}
+</code></pre>
+
+
+
+<h3>Card Fields</h3>
+
+
+
+<p>Match Fizzy’s internal card serializer:</p>
+
+
+
+<ul><li>
+<code>id</code>, <code>title</code>, <code>status</code> (<code>drafted</code> or <code>published</code>)
+</li><li>
+<code>image_url</code> (nullable)
+</li><li>
+<code>golden</code> boolean flag
+</li><li>
+<code>last_active_at</code>, <code>created_at</code>
+</li><li>
+<code>url</code>
+</li><li>
+<code>board</code> (nested summary)
+</li><li>
+<code>column</code> (or <code>null</code>)
+</li><li>
+<code>creator</code> (user summary)
+</li></ul>
+
+
+
+<h3>Comment Fields</h3>
+
+
+
+<p>When <code>action: "comment_created"</code>, the <code>eventable</code> object contains:</p>
+
+
+
+<ul><li>
+<code>id</code>
+</li><li>
+timestamps
+</li><li>
+<code>body.plain_text</code> and <code>body.html</code>
+</li><li>
+<code>creator</code>
+</li><li>
+<code>reactions_url</code>
+</li><li>
+<code>url</code>
+</li></ul>
+
+
+
+<h3>Notes</h3>
+
+
+
+<ul><li> Specific “particulars” (e.g., <em>which user</em> was assigned/unassigned) are <strong>not included</strong> — clients should re-fetch the card for detailed context. </li><li> URLs include the account slug to support multi-tenancy. </li><li>The column information is added only when there is something happening which is based on column (like changing the column).</li></ul>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>2) Slack-Compatible Format</h2>
+
+
+
+<p>Triggered when the webhook URL matches:</p>
+
+
+
+<pre class="wp-block-code"><code>https://hooks.slack.com/services/...
+</code></pre>
+
+
+
+<p><code>Content-Type: application/json</code></p>
+
+
+
+<p>Body:</p>
+
+
+
+<pre class="wp-block-code"><code>{ "text": "&lt;mrkdwn text>" }
+</code></pre>
+
+
+
+<p>Conversion rules:</p>
+
+
+
+<ul><li>
+HTML → Slack mrkdwn
+</li><li>
+<code>&lt;a href="url"&gt;text&lt;/a&gt;</code> → <code>&lt;url|text&gt;</code>
+</li><li>
+<code>&lt;b&gt;</code> → <code>*bold*</code>
+</li><li>
+<code>&lt;i&gt;</code> → <code>_italic_</code>
+</li><li>
+All other HTML stripped
+</li></ul>
+
+
+
+<p>Example output:</p>
+
+
+
+<pre class="wp-block-code"><code>David added Logo refresh &#x2197;︎ https://fizzy.localhost:3006/1234567/cards/42
+</code></pre>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>3) Basecamp Campfire (Chat Line)</h2>
+
+
+
+<p>Recognized when the URL matches:</p>
+
+
+
+<pre class="wp-block-code"><code>/\d+/integrations/[^/]+/buckets/\d+/chats/\d+/lines
+</code></pre>
+
+
+
+<p><code>Content-Type: application/x-www-form-urlencoded</code></p>
+
+
+
+<p>Body:</p>
+
+
+
+<pre class="wp-block-code"><code>content=&lt;html_snippet>
+</code></pre>
+
+
+
+<p>The snippet is the same HTML described below, URL-encoded.</p>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>4) Campfire-Compatible HTML</h2>
+
+
+
+<p>Matched when the URL resembles:</p>
+
+
+
+<pre class="wp-block-code"><code>/rooms/\d+/\d+-[^/]+/messages
+</code></pre>
+
+
+
+<p><code>Content-Type: text/html</code></p>
+
+
+
+<p>Body: raw HTML snippet.</p>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>HTML Template (Shared by Slack / Basecamp / Campfire)</h2>
+
+
+
+<p>Rendered from <code>app/views/webhooks/event.html.erb</code>:</p>
+
+
+
+<pre class="wp-block-code"><code>&lt;plain sentence about the event>
+&lt;a href="https://...">&#x2197;︎&lt;/a>
+</code></pre>
+
+
+
+<p>Rules:</p>
+
+
+
+<ul><li>
+Sentences come from <code>Event::Description</code>
+</li><li>
+Personalized when Fizzy knows the acting user (“You added…”)
+</li><li>
+Comments use “{creator} commented on {card title}”
+</li><li>
+Link points to the card or comment URL
+</li></ul>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>Delivery Flow Overview</h2>
+
+
+
+<p>Inside Fizzy:</p>
+
+
+
+<ol><li>
+Cards and comments emit events through the <code>Eventable</code> concern
+</li><li>
+<code>Event::WebhookDispatchJob</code> identifies relevant active webhooks
+</li><li>
+Each webhook delivery is enqueued as a <code>Webhook::Delivery</code>
+</li><li>
+<code>Webhook::DeliveryJob</code> sends the request, records metadata, and handles success/failure
+</li><li>
+Excessive failures deactivate the webhook automatically
+</li></ol>
+
+
+
+<p>This keeps webhook delivery reliable and auditable without blocking the main application.</p>
+
+
+
+<hr class="wp-block-separator"/>
+
+
+
+<h2>Final Notes</h2>
+
+
+
+<p>This post should serve as a complete, implementable reference until official documentation appears. If you’re building integrations &#8211; Slack apps, internal automations, reporting scripts, or custom activity feeds, this covers everything Fizzy emits today.</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/fizzy-webhooks-documentation/">The missing Webhooks documentation for Fizzy</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+									<post-id xmlns="com-wordpress:feed-additions:1">235</post-id>	</item>
+		<item>
+		<title>Polymorphic Associations in Rails Explained</title>
+		<link>https://www.pilanites.com/polymorphic-associations-rails/</link>
+				<pubDate>Fri, 18 Aug 2017 13:15:18 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[guides]]></category>
+		<category><![CDATA[rails]]></category>
+
+		<guid isPermaLink="false">http://www.pilanites.com/?p=159</guid>
+				<description><![CDATA[<p>Polymorphic Associations allow you to create a single model and let it &#8220;belong to&#8221; multiple models. Allow me to explain how they work. I wanted to have a single Photo model, which can be used for thumbnails, employees, product, etc. for the practice management app...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/polymorphic-associations-rails/">Polymorphic Associations in Rails Explained</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<p>Polymorphic Associations allow you to create a single model and let it &#8220;belong to&#8221; multiple models. Allow me to explain how they work.</p>
+<p>I wanted to have a single <code>Photo</code> model, which can be used for thumbnails, employees, product, etc. for the practice management app that I am working on.</p>
+<p>I knew that making a different model for each of these is not feasible, and it will lead to a lot of duplicated code, so I implemented them using Polymorphic associations.</p>
+<h2>Rails Polymorphic Associations</h2>
+<p>&nbsp;</p>
+<p><img class="aligncenter" src="https://i2.wp.com/guides.rubyonrails.org/images/polymorphic.png?resize=640%2C728" alt="Image from Office guides for Polymorphic Associations" width="640" height="728" data-recalc-dims="1" /></p>
+<p>Well, with polymorphic associations, a model can belong to more than one other model, on a single association.</p>
+<p>For example, you might have a picture model that belongs to either an employee model or a product model (visualized in the pic above). Don’t worry if you don’t understand the code written there. You will after reading this article (probably).</p>
+<p>The most weird part of the above code seems to be the part which says</p>
+<pre lang="ruby">belongs_to :imageable, polymorphic: true</pre>
+<p>This just means that the model Picture does not belong to any of the Employee or Product model but to something called <code>imageable</code>.</p>
+<p><em>Uh, oh. I was taught that models belong to models and nothing else. You can check any code which has belongs_to clause.</em></p>
+<p>Well, that is kinda true, but we have to change it a little while using polymorphic associations (if you forgot, they mean that it could be associated with many models). So, imageable here acts as an interface to link to, for other models which link the same way they did except now they add a clause of <code>as: :imageable</code>. For example, the Person model now looks like:</p>
+<pre lang="RUBY" escaped="true">class Person &lt; ActiveRecord::Base
+  has_many :pictures, as: :imageable
+end</pre>
+<p>You could have used any word in place of imageable, like picturable, photogenic, photograph, baklind, dhoni anything! They just have to match your column name.</p>
+<p><em>Wait, what? Which column? What column? Which table?</em></p>
+<p>Good question. You have to setup a reference in your Picture model to store the foreign key of the row it <code>belongs_to</code>. Now how do we do that?</p>
+<p>First, let us look at how we did for non-polymorphic associations. If, for example we have a Question model and Choice model, we say choice belongs to question and question has many choices. So, to make that thing work properly, we generally include a column <code>question_id</code>  in the <code>choices</code> table. That thing generally works out without any problem and we live a happy satisfied life.</p>
+<p>But, there is no specific model assigned here in the polymorphic associations. What field do we use then? A wise man said, double the amount if you are not sure. Lets follow that wise man. We use two foreign keys! One key for the <code>id</code> and another for <code>class</code>.</p>
+<p>For the Picture case, they foreign keys are <code>imageable_id</code> and <code>imageable_type</code>. The <code>imageable_id</code> is the id of the record this row belongs to and <code>imageable_type</code> is the class name. The migration looks something like this,</p>
+<pre lang="Ruby">add_column :pictures, :imageable_id, :integer
+add_column :pictures, :imageable_type, :string</pre>
+<p>or you can use a handy trick provided by rails,</p>
+<pre lang="Ruby">t.references :imageable, polymorphic: true</pre>
+<p>Just run the migration now, add the snippets to your model, and congratulations. You successfully have configured a polymorphic association!</p>
+<p><em>Yayy!! Well that was simple. Thanks man. Now, how do I actually reference it?</em></p>
+<p>Ahh, the easy part. Let me assume that you know how to get data from model ( person = Person.find(23) ). There are two ways to create a reference, from the parent side or from child side.</p>
+<pre lang="Ruby">person.picture = picture</pre>
+<p>or</p>
+<pre lang="Ruby">picture.imageable = person</pre>
+<p>That is all really is there to assigning. Don’t forget to call save method on picture though, otherwise its gone as soon as the object stops persisting.</p>
+<p><em>Seems simple enough, but I have a question. How do you use it to accept data from forms?</em></p>
+<p>This is tricky and so I think I should leave it to experts. Check out this <a href="http://railscasts.com/episodes/154-polymorphic-association" target="_blank" rel="noopener noreferrer">Railscasts</a>. It shows how to do all this for comments. Ideal if you wish to create Facebook and would need comments for all your Photo, Status, Video models.</p>
+<p>You can either use the method shown by Ryan Bates in Railscasts or do manual assigning the way I showed. I prefer doing the manual assigning though. Easier to setup and less confusing. Plus, you have full control as you know where the code is and what it does.</p>
+<p>I have one little trick which I’d like to share. As many people know, adding index to column in tables makes it for faster searching for data through that column, you all will be tempted to add index to both <code>imageable_type</code> and <code>imageable_id</code> columns by typing two migrations like this</p>
+<pre lang="Ruby">add_index :pictures, :imageable_id
+add_index :pictures, :imageable_type</pre>
+<div>And now, you should have faster finds, shouldn’t you? Well no! What we did was create two different indexes in the pictures table but we are always going to search for them together, instead we should</div>
+<pre lang="Ruby">add_index :pictures, [:imageable_type, :imageable_id]</pre>
+<div>While we are at it, we can also limit the size of <code>imageable_type</code> column. We are storing it as a string but do you think we would really have a model name of 255 characters? Decreasing the size will also allow for smaller indexing and faster searching. We can limit the size by passing an option</div>
+<div></div>
+<pre lang="Ruby">add_column :pictures, :imageable_type, :string, limit: 15</pre>
+<div>while migrating the database to get truly fast searching.</div>
+<p>Have some of your little tricks or you think I did a mistake and a proved to be a bad teacher? Write it in the comments.</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/polymorphic-associations-rails/">Polymorphic Associations in Rails Explained</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+									<post-id xmlns="com-wordpress:feed-additions:1">159</post-id>	</item>
+		<item>
+		<title>Android Sync Adapter: Implementation to Sync Manually</title>
+		<link>https://www.pilanites.com/android-sync-adapter/</link>
+				<comments>https://www.pilanites.com/android-sync-adapter/#comments</comments>
+				<pubDate>Thu, 23 Mar 2017 11:07:35 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[guides]]></category>
+
+		<guid isPermaLink="false">http://www.pilanites.com/?p=112</guid>
+				<description><![CDATA[<p>In my last post, I showed how to implement an Android Account Manager, which utilizes the internal Android&#8217;s system for managing user accounts. Once you&#8217;ve implemented that, you are ready to take your app to the next level with Android Sync Adapter (SyncAdapter). What is...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/android-sync-adapter/">Android Sync Adapter: Implementation to Sync Manually</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<p>In my last post, I showed <a href="http://www.pilanites.com/android-account-manager/">how to implement an Android Account Manager</a>, which utilizes the internal Android&#8217;s system for managing user accounts. Once you&#8217;ve implemented that, you are ready to take your app to the next level with Android Sync Adapter (<code>SyncAdapter</code>).</p>
+<h2>What is Android Sync Adapter?</h2>
+<p>A <code>SyncAdapter</code> is a plug-in provided by Android to help out with most of the scenarios regarding the syncing abilities of your app. This service is managed by the platform, which is in charge of running it when requested or scheduled.</p>
+<p>You can roll out a similar service of your own by writing custom <code>Service</code> classes and calling them as and when required. But there are many advantages of using the android sync adapter like :-</p>
+<ol>
+<li><strong>Battery Efficiency</strong> &#8211; The system schedules your syncs as and when it is convenient for the phone, thus optimizing to efficiently use battery, and other <em>scarce</em> resources.</li>
+<li><strong>Error Handling</strong> &#8211; The Android Sync Adapter knows what screens to show when the server responds with an authentication error, or how to retry with <a href="http://en.wikipedia.org/wiki/Exponential_backoff">exponential back offs</a> if something goes wrong.</li>
+<li><strong>Disable Background Sync</strong> &#8211; The user gets to disable sync in background via settings, which is difficult to create in your own implementation. This also plays nice with other apps your users use to save battery/data in their phones.</li>
+<li><strong>Easier Code Management</strong> &#8211; Everyone will organize their code in their own style, leading to problems of getting productive or understanding code structure. Android Sync Adapter will have a similar interface for most of the projects, thus helping your developers to know where to look for things they need. This also why frameworks work better for teams.</li>
+</ol>
+<p>All these advantages come at a price though, you need to learn it! Google has tried hard to make it easier for you to learn by providing a <a href="https://developer.android.com/training/sync-adapters/creating-sync-adapter.html">training chapter</a> and a sample implementation (by the name <code>SampleSyncAdapter</code>), but it is still not simple to understand. There are many unanswered questions about how some properties work, and how does it react under certain circumstances.</p>
+<h2>Building our Sync Adapter</h2>
+<h3>Making the SyncAdapter class</h3>
+<p>Our <code>SyncAdapter</code> is a subclass of <code>AbstractThreadedSyncAdapter</code> which implements its abstract method <code>onPerformSync</code>.</p>
+<pre lang="Java">public class SyncAdapter extends AbstractThreadedSyncAdapter {
+
+    private AccountManager mAccountManager;
+
+    public SyncAdapter(Context context, boolean autoInitialize) {
+        super(context, autoInitialize);
+        mAccountManager = AccountManager.get(context);
+    }
+
+    public SyncAdapter(Context context, boolean autoInitialize, boolean allowParallelSyncs) {
+        super(context, autoInitialize, allowParallelSyncs);
+        mAccountManager = AccountManager.get(context);
+    }
+
+    @Override
+    public void onPerformSync(Account account, Bundle extras,
+                              String authority, ContentProviderClient provider,
+                              SyncResult syncResult) {
+        try {
+            String authToken = mAccountManager.blockingGetAuthToken(account,
+                    AccountConstants.AUTH_TOKEN_TYPE, true);
+            // Use the authToken and write your sync logic. Skip the previous call if authToken is not required
+        } catch (OperationCanceledException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (AuthenticatorException e) {
+            e.printStackTrace();
+        }
+    }
+}</pre>
+<p>This is a sample implementation, but it is not enough in itself because you&#8217;ll have to register your Sync Adapter with Android&#8217;s OS. Also note that the adapter doesn&#8217;t care what code it runs, its sole responsibility is to run that code. So you&#8217;ll have to write your syncing logic in the little comment I&#8217;ve left above.</p>
+<p>Sync Adapter&#8217;s thread can make synchronous network calls as it runs in its very own background thread. This is why we make a <code>blockingGetAuthToken</code> call in the <code>onPerformSync</code> method.</p>
+<h3>Making the SyncService</h3>
+<p>The sync adapter also needs a Service to run in. We create this service from within the app so it has access to all the resources that our app has access to while running. The Service is a simple one, where we initialize our adapter when the service starts, and bind it to our adapter.</p>
+<pre lang="Java">/**
+ * Define a Service that returns an IBinder for the
+ * sync adapter class, allowing the sync adapter framework to call
+ * onPerformSync().
+ */
+public class SyncService extends Service {
+    // Storage for an instance of the sync adapter
+    private static SyncAdapter sSyncAdapter = null;
+    // Object to use as a thread-safe lock
+    private static final Object sSyncAdapterLock = new Object();
+
+    /*
+     * Instantiate the sync adapter object.
+     */
+    @Override
+    public void onCreate() {
+        /*
+         * Create the sync adapter as a singleton.
+         * Set the sync adapter as syncable
+         * Disallow parallel syncs
+         */
+        synchronized (sSyncAdapterLock) {
+            if (sSyncAdapter == null) {
+                sSyncAdapter = new SyncAdapter(getApplicationContext(), true);
+            }
+        }
+    }
+
+    /**
+     * Return an object that allows the system to invoke
+     * the sync adapter.
+     */
+    @Override
+    public IBinder onBind(Intent intent) {
+        /*
+         * Get the object that allows external processes
+         * to call onPerformSync(). The object is created
+         * in the base class code when the SyncAdapter
+         * constructors call super()
+         */
+        return sSyncAdapter.getSyncAdapterBinder();
+    }
+}
+
+</pre>
+<p>Of course, when you create a service, you need to declare it in the Manifest file.</p>
+<p>The manifest file looks something like this :</p>
+<pre lang="xml" escaped="true">&lt;service
+    android:name="com.pilanites.streaks.SyncService"
+    android:exported="true"
+    android:process=":sync"&gt;
+    &lt;intent-filter&gt;
+        &lt;action android:name="android.content.SyncAdapter" /&gt;
+    &lt;/intent-filter&gt;
+
+    &lt;meta-data
+        android:name="android.content.SyncAdapter"
+        android:resource="@xml/syncadapter" /&gt;
+&lt;/service&gt;</pre>
+<p>It looks like your run of the mill service, but there are some important differences.</p>
+<p><code>android:process=":sync"</code> is a required attribute. This tells the system that this service is a part of the sync process.</p>
+<p>The <code>intent-filter</code> provided let&#8217;s the system know when to run this service (like when a specific intent is provided).</p>
+<p>Then, in the meta data, you have the name, same as intent-filter and something called <code>android:resource</code>. This is a vital piece of information which describes our Android Sync Adapter.</p>
+<p>Just like how we created a <code>authenticator.xml</code> file when we used the <a href="http://www.pilanites.com/android-account-manager/">Android Account Manager</a>, we&#8217;ll create a <code>syncadapter.xml</code> file here.</p>
+<h3>Creating the syncadapter.xml file</h3>
+<p>Logically, next we have to create a <code>syncadapter.xml</code> file.</p>
+<pre lang="xml" escaped="true">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="@string/account_type"
+    android:allowParallelSyncs="true"
+    android:contentAuthority="@string/content_authority"
+    android:isAlwaysSyncable="true"
+    android:supportsUploading="true"
+    android:userVisible="false" /&gt;</pre>
+<p>The two things I would like to explain in this small snippet are <code>accountType</code> and <code>contentAuthority</code>.</p>
+<p><code>accountType</code> is the value that you&#8217;d have provided in your <code>authenticator.xml</code> file. This values is used to associate between your account and it&#8217;s sync.</p>
+<p><code>contentAuthority</code> is used to associate with a content provider. I use <a href="http://www.activeandroid.com/">activeandroid</a> as my database ORM, and it provides me with a content provider out of the box (if you need to create your own content provider, <a href="https://developer.android.com/guide/topics/providers/content-provider-creating.html">this is a good guide</a>), so I simply declare it in my Manifest file as :-</p>
+<pre lang="xml" escaped="true">&lt;provider
+    android:name="com.activeandroid.content.ContentProvider"
+    android:authorities="@string/content_authority"
+    android:exported="false" /&gt;</pre>
+<p>As you see, I have the same value for authorities here, as I had in <code>syncadapter.xml</code>.</p>
+<p>(I have used <code>com.pilanites.streaks.provider</code> as my content authority, but you can use anything, just try not to use something common, in case it clashes.)</p>
+<h3>Adding relevant permissions</h3>
+<p>You&#8217;ll need to add three permissions to your manifest file to be able to read, write sync status and settings.</p>
+<pre lang="xml" escaped="true">&lt;uses-permission android:name="android.permission.READ_SYNC_SETTINGS" /&gt;
+&lt;uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" /&gt;
+&lt;uses-permission android:name="android.permission.READ_SYNC_STATS" /&gt;</pre>
+<h2>Running a Sync</h2>
+<p>Phew, after going through 1000 words, we should have properly created and configured the Sync mechanism. All that is left is to run it at the right time.</p>
+<p>There are multiple ways to run sync, which you can go through in this <a href="http://blog.udinic.com/2013/07/24/write-your-own-android-sync-adapter/">wonderful guide by udinic</a>. I&#8217;ll be focusing on running a sync manually via code.</p>
+<p>This means the app will run the sync only when requested by us. Common scenarios will be to run it when a sync button is clicked, or you detect that there were some changes in your local data set and now it needs to be synced.</p>
+<pre lang="Java">public void sync() {
+    Account account = UserAccountUtil.getAccount(this);
+    Bundle settingsBundle = new Bundle();
+    settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
+    settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+    /*
+     * Request the sync for the default account, authority, and
+     * manual sync settings
+     */
+    ContentResolver.requestSync(account, getResources().getString(R.string.content_authority), settingsBundle);
+}</pre>
+<p>Just call this <code>sync()</code> method whenever you need to sync your data, and it&#8217;ll run the service and perform the <code>onPerformSync</code> method. The <code>UserAccountUtil</code>&#8216;s <code>getAccount</code> method can be seen implemented in the <a href="https://gist.github.com/shobhitic/3eae4ee77d1eaf14296163b03b981ef8#file-useraccountutil-java">gist</a>.</p>
+<p>And&#8230; that&#8217;s it!</p>
+<p>You can find all the relevant code samples in this <a href="https://gist.github.com/shobhitic/3eae4ee77d1eaf14296163b03b981ef8">gist</a>.</p>
+<p>Hopefully this helps in implementing your own Android Sync Adapter. If you liked this guide and want more of these, or have a question, I urge you to leave a comment here if you have any questions or tweet them to me, <a href="https://twitter.com/shobhitic">@shobhitic</a>.</p>
+<p>It&#8217;ll be great if you can get on my mailing list as well.</p>
+<hr />
+<p><!-- Begin MailChimp Signup Form --></p>
+<style type="text/css">
+	#mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }<br />	/* Add your own MailChimp form style overrides in your site stylesheet or in this style block.<br />	   We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */<br /></style>
+<div id="mc_embed_signup">
+<form id="mc-embedded-subscribe-form" class="validate" action="//pilanites.us8.list-manage.com/subscribe/post?u=307c2721bdd03e12f241c1707&amp;id=9a6f5efe13" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+<div id="mc_embed_signup_scroll">
+<h2>Want these posts in your inbox?</h2>
+<div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
+<div class="mc-field-group"><label for="mce-EMAIL">Email Address <span class="asterisk">*</span><br />
+</label><br />
+<input id="mce-EMAIL" class="required email" name="EMAIL" type="email" value="" /></div>
+<div class="mc-field-group"><label for="mce-NAME">First Name </label><br />
+<input id="mce-NAME" class="" name="NAME" type="text" value="" /></div>
+<div id="mce-responses" class="clear"></div>
+<p><!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups--></p>
+<div style="position: absolute; left: -5000px;"><input tabindex="-1" name="b_307c2721bdd03e12f241c1707_9a6f5efe13" type="text" value="" /></div>
+<div class="clear"><input id="mc-embedded-subscribe" class="button" name="subscribe" type="submit" value="Subscribe" /></div>
+</div>
+</form>
+</div>
+<p><!--End mc_embed_signup--></p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/android-sync-adapter/">Android Sync Adapter: Implementation to Sync Manually</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+							<wfw:commentRss>https://www.pilanites.com/android-sync-adapter/feed/</wfw:commentRss>
+		<slash:comments>9</slash:comments>
+						<post-id xmlns="com-wordpress:feed-additions:1">112</post-id>	</item>
+	</channel>
+</rss>

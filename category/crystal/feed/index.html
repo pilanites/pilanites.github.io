@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	
+xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+>
+
+<channel>
+	<title>crystal &#8211; Pilanites</title>
+	<atom:link href="https://www.pilanites.com/category/crystal/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.pilanites.com</link>
+	<description>Business of Online Products</description>
+	<lastBuildDate>
+	Fri, 05 Dec 2025 14:13:45 +0000	</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.1.24</generator>
+
+<image>
+	<url>https://i0.wp.com/www.pilanites.com/wp-content/uploads/2016/06/cropped-lotucrocket.png?fit=32%2C32&#038;ssl=1</url>
+	<title>crystal &#8211; Pilanites</title>
+	<link>https://www.pilanites.com</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">35050694</site>	<item>
+		<title>Built and Deployed an Amber app in 2 days</title>
+		<link>https://www.pilanites.com/deployed-amber-crystal/</link>
+				<pubDate>Wed, 27 Jun 2018 07:59:53 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[amber]]></category>
+		<category><![CDATA[crystal]]></category>
+
+		<guid isPermaLink="false">https://www.pilanites.com/?p=224</guid>
+				<description><![CDATA[<p>Yesterday night, I deployed my first Amber app to production. It&#8217;s a JSON hosting service for your mobile and web apps. I call it JSON Keeper. The app is very simple and straightforward right now. It only has one screen with no user accounts. You...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/deployed-amber-crystal/">Built and Deployed an Amber app in 2 days</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<p>Yesterday night, I deployed my first Amber app to production. It&#8217;s a <a href="https://jsonkeeper.com/">JSON hosting service for your mobile and web apps</a>. I call it <a href="https://jsonkeeper.com/">JSON Keeper</a>.</p>
+<p>The app is very simple and straightforward right now. It only has one screen with no user accounts. You simply go to the site, paste your JSON and receive a URL where it&#8217;ll be hosted.</p>
+<p><img class="aligncenter size-medium" src="https://i1.wp.com/i.imgur.com/1ymimhf.png?resize=640%2C420&#038;ssl=1" alt="JSON Keeper - A simple JSON hosting store for your web and mobile apps" width="640" height="420" data-recalc-dims="1" /></p>
+<p>&nbsp;</p>
+<p>Building the app was very similar to Rails experience. Amber has the good old MVC structure, and regularly spits out response in microseconds.</p>
+<p>It took me some time to internalize that it is reporting things in microseconds. I kept comparing the response time of Amber app to a Rails app. This was a bit disappointing as I saw 300ms for Rails and 300 µs for Amber app.</p>
+<p>Later when I looked closely at the unit of time did it all make sense.</p>
+<p>Developing this app was a refreshing experience. I was concerned that strong typing will get in the way of productivity but it rarely happened. Although I did run into a weird bug which produced itself only on production, but that&#8217;s a story for another time.</p>
+<h3>Speed</h3>
+<p>Yes, any post from a Rubyist trying out new frameworks and languages will invite speed comparison, but it&#8217;s true. Crystal is a blanzingly fast language and when deployed by creating an optimized binary, the response time is mind blowing.</p>
+<p>As I had said a few paragraphs ago, Amber is generating a response in less than 1 millisecond. Think about that! A similar Rails app deployed with MRI and passenger takes 200 milliseconds or so to generate a response.</p>
+<p>Needless to say, Crystal (and Amber) is really giving us great speed with a pleasure to work with language.</p>
+<p>&#8220;Fast as C, Slick as Ruby&#8221; is true!</p>
+<h3>Deployment</h3>
+<p>Deployment experience very nice with Amber. You can build a binary to copy paste (or `scp`) to your server and it have all required files, and code to run the server. No need to install and maintain dependencies on your servers any more. This also helps us while sharing our app with others.</p>
+<p>This is pretty similar to how Go lang does it deployment.</p>
+<p>On top of manually building and deploying, Amber gives you some deploy recipes out of the box. Currently it supports Digital Ocean and Heroku, with support for AWS, Azure, GCP coming soon.</p>
+<p>This is kind of like Capistrano integrated in framework itself with native support and the ability to spin up servers. Although, I didn&#8217;t use this feature as I wanted to experience the native way of deploying Amber/Crystal apps.</p>
+<h3>Stability</h3>
+<p>Stability can be measured on two different parameters &#8211; How stable is the server once deployed, and how stable is the framework/language in terms of incorporating breaking changes with new releases.</p>
+<p>The servers seems to be very stable. I did some load testing on it and while Ruby/Node servers start responding slowly, I saw no such issue with Amber.</p>
+<p>The framework and its APIs though are largely work in progress. I myself contributed <a href="https://github.com/amberframework/amber/commits?author=shobhitic">a couple of commits</a> to the framework and reading through the code and discussions shows you that the framework, and possible even the language, will have breaking changes in next releases.</p>
+<p>To be fair I&#8217;ve used Amber v0.8.0 and Crystal v0.25.0 so these kinds of things are expected.</p>
+<h3>Conclusion</h3>
+<p>I am super excited about future of these two little technologies. Writing Crystal is a pleasure and it provides a lot of things which Ruby by its nature cannot. All Crystal (and Amber) now need is a serious corporate backing and they&#8217;ll explode in popularity.</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/deployed-amber-crystal/">Built and Deployed an Amber app in 2 days</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+									<post-id xmlns="com-wordpress:feed-additions:1">224</post-id>	</item>
+	</channel>
+</rss>

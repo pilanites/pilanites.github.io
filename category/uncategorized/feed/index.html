@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	
+xmlns:georss="http://www.georss.org/georss" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
+>
+
+<channel>
+	<title>Uncategorized &#8211; Pilanites</title>
+	<atom:link href="https://www.pilanites.com/category/uncategorized/feed/" rel="self" type="application/rss+xml" />
+	<link>https://www.pilanites.com</link>
+	<description>Business of Online Products</description>
+	<lastBuildDate>
+	Fri, 05 Dec 2025 14:13:45 +0000	</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=5.1.24</generator>
+
+<image>
+	<url>https://i0.wp.com/www.pilanites.com/wp-content/uploads/2016/06/cropped-lotucrocket.png?fit=32%2C32&#038;ssl=1</url>
+	<title>Uncategorized &#8211; Pilanites</title>
+	<link>https://www.pilanites.com</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">35050694</site>	<item>
+		<title>Now you can issue wildcard certificates from Let&#8217;s Encrypt</title>
+		<link>https://www.pilanites.com/issue-wildcard-certificates-lets-encrypt/</link>
+				<pubDate>Thu, 15 Mar 2018 08:49:03 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[Uncategorized]]></category>
+
+		<guid isPermaLink="false">https://www.pilanites.com/?p=207</guid>
+				<description><![CDATA[<p>Let&#8217;s Encrypt, the free Certificate Authority has announced that it now supports issuing wildcard certificates for your domains. Wildcard certificates will be issued only through the ACMEv2 protocol. You might need to update your client before it supports it. What are Wildcard Certificates? Wildcard certificates...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/issue-wildcard-certificates-lets-encrypt/">Now you can issue wildcard certificates from Let&#8217;s Encrypt</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<p>Let&#8217;s Encrypt, the free Certificate Authority has announced that it now supports issuing wildcard certificates for your domains.</p>
+<p>Wildcard certificates will be issued only through the <a href="https://datatracker.ietf.org/wg/acme/about/">ACMEv2</a> protocol. You might need to update your client before it supports it.</p>
+<h2>What are Wildcard Certificates?</h2>
+<p><a href="https://en.wikipedia.org/wiki/Wildcard_certificate">Wildcard certificates</a> allow you to secure all subdomains of a domain with a single certificate.</p>
+<p>Let&#8217;s assume you own a site &#8211; tumblr.com, where people can signup and host their sites on your subdomains. Without a wildcard certificate, you would need to issue a certificate for every user who signs up, and make sure they are renewed.</p>
+<p>There is a limit of 100 certificates per domain in Let&#8217;s Encrypt, so this will quickly hamper your ability to grow.</p>
+<p>People buy a wildcard certificate from a CA, for a huge amount of money to support this functionality.</p>
+<p>Don&#8217;t need to do that anymore. Let&#8217;s Encrypt now supports issuing wildcard certificates with DNS verification.</p>
+<p>If you&#8217;re going to use SSL certificates from Let&#8217;s Encrypt, you&#8217;ll need to monitor them, in case your renewal cron doesn&#8217;t work. <a href="https://monitorcertificates.com/">CertsMonitor</a> will help you do that!</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/issue-wildcard-certificates-lets-encrypt/">Now you can issue wildcard certificates from Let&#8217;s Encrypt</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+									<post-id xmlns="com-wordpress:feed-additions:1">207</post-id>	</item>
+		<item>
+		<title>Monitor SSL Certificates Expiration</title>
+		<link>https://www.pilanites.com/monitor-ssl-certificates-expiration/</link>
+				<pubDate>Wed, 07 Mar 2018 06:41:01 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[Uncategorized]]></category>
+
+		<guid isPermaLink="false">https://www.pilanites.com/?p=202</guid>
+				<description><![CDATA[<p>I love Let&#8217;s Encrypt. It&#8217;s a simple tool which helps you automate process of renewing certificates, and for free! It&#8217;s great if you&#8217;re using managed hosting and your provider takes care of this automation, but if you&#8217;re using a VPS like me, the process sometimes...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/monitor-ssl-certificates-expiration/">Monitor SSL Certificates Expiration</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<p>I love <a href="https://letsencrypt.org/">Let&#8217;s Encrypt</a>. It&#8217;s a simple tool which helps you automate process of renewing certificates, and for free!</p>
+<p>It&#8217;s great if you&#8217;re using managed hosting and your provider takes care of this automation, but if you&#8217;re using a VPS like me, the process sometimes fails randomly. This happens mostly because <a href="https://certbot.eff.org/">certbot</a>, the tool I use to automate this renewal process, is not updated and therefore doesn&#8217;t work.</p>
+<p>It&#8217;s not a big deal if I am managing one or two domains, but it becomes an issue if I manage say 10, or 50 domains.<span id="more-202"></span></p>
+<p>When you&#8217;re dealing with so many domains and their certificates, it gets difficult to keep a tab on them.</p>
+<p>There&#8217;s no single place to glance when each of the certificate is expiring. The certificate seller sends reminders to your billing email, which no one checks.</p>
+<p>In the end, yours or your client&#8217;s site shows the embarrassing &#8220;Insecure Connection&#8221; page when users visit it.</p>
+<figure style="width: 1840px" class="wp-caption aligncenter"><img class="size-medium" src="https://i2.wp.com/i.imgur.com/5FKHIHL.png?resize=640%2C356&#038;ssl=1" width="640" height="356" data-recalc-dims="1" /><figcaption class="wp-caption-text">The embarrassing Insecure Connection page!</figcaption></figure>
+<h3>The Solution</h3>
+<p>To keep on top of this issue, I&#8217;ve created a simple tool. Name of the tool is <a href="https://monitorcertificates.com">CertsMonitor</a>.</p>
+<p>This tool :-</p>
+<ul>
+<li>helps you keep a track of your certificates.</li>
+<li>Sends you reminders before they expire</li>
+<li>is super easy to use</li>
+</ul>
+<p>The tools looks like this</p>
+<p><img class="aligncenter size-medium" src="https://i0.wp.com/i.imgur.com/6ykF2GZ.png?resize=640%2C351&#038;ssl=1" alt="Tool to Monitor SSL Certificates Expiration" width="640" height="351" data-recalc-dims="1" /></p>
+<p>Sign up for free at <a href="https://monitorcertificates.com">monitorcertificates.com</a>.</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/monitor-ssl-certificates-expiration/">Monitor SSL Certificates Expiration</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+									<post-id xmlns="com-wordpress:feed-additions:1">202</post-id>	</item>
+		<item>
+		<title>Open Source Swift app</title>
+		<link>https://www.pilanites.com/open-source-swift-app/</link>
+				<pubDate>Thu, 26 Oct 2017 19:57:55 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[Uncategorized]]></category>
+
+		<guid isPermaLink="false">https://www.pilanites.com/?p=186</guid>
+				<description><![CDATA[<p>I have been meaning to contribute open source code since a long time now. I want to see my Github streaks go green too. Every time I decide to contribute, I get stuck because I don&#8217;t know about repositories where I can help. Or how...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/open-source-swift-app/">Open Source Swift app</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<p>I have been meaning to contribute open source code since a long time now. I want to see my Github streaks go green too.</p>
+<p>Every time I decide to contribute, I get stuck because I don&#8217;t know about repositories where I can help. Or how to help the complex open source projects that I use.</p>
+<p>So when I started learning Swift, I decided that I&#8217;ll create an open source app.</p>
+<p>I searched for an open source To Do List app in Swift but search results weren&#8217;t helpful. So I took the most logical decision.</p>
+<p>I am making an <a href="https://github.com/shobhitic/swift-to-do-list">open source To Do List app in Swift</a>. My goal is to create a simple app to showcase my code, and help other beginners like me.</p>
+<blockquote class="twitter-tweet" data-width="550">
+<p lang="en" dir="ltr">Decided to create an open source app and now I feel the pressure of being judged with every commit. <a href="https://t.co/IWYEXr9VH5">https://t.co/IWYEXr9VH5</a></p>
+<p>&mdash; Shobhit<img src="https://s.w.org/images/core/emoji/11.2.0/72x72/1f388.png" alt="🎈" class="wp-smiley" style="height: 1em; max-height: 1em;" /><img src="https://s.w.org/images/core/emoji/11.2.0/72x72/2728.png" alt="✨" class="wp-smiley" style="height: 1em; max-height: 1em;" /> (@shobhitic) <a href="https://twitter.com/shobhitic/status/923584227831980033?ref_src=twsrc%5Etfw">October 26, 2017</a></p></blockquote>
+<p><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+<p>What&#8217;s the best way to make a project less intimidating?</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/open-source-swift-app/">Open Source Swift app</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+									<post-id xmlns="com-wordpress:feed-additions:1">186</post-id>	</item>
+		<item>
+		<title>How do I get a job as a developer without experience?</title>
+		<link>https://www.pilanites.com/developer-job-without-experience/</link>
+				<comments>https://www.pilanites.com/developer-job-without-experience/#comments</comments>
+				<pubDate>Mon, 29 May 2017 15:26:32 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[Uncategorized]]></category>
+
+		<guid isPermaLink="false">http://www.pilanites.com/?p=142</guid>
+				<description><![CDATA[<p>Finding a job as a self taught developer, or as a fresher looks daunting. Almost all the companies are only looking for experienced people, and how will you get any experience if you don&#8217;t get a job? This catch-22 has been catching people&#8217;s imagination for...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/developer-job-without-experience/">How do I get a job as a developer without experience?</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<p>Finding a job as a self taught developer, or as a fresher looks daunting. Almost all the companies are only looking for experienced people, and how will you get any experience if you don&#8217;t get a job?</p>
+<p>This catch-22 has been catching people&#8217;s imagination for long time now. It has even become a meme of its own.</p>
+<p>So how do you as a person with no experience get a job?</p>
+<p>There are usually two scenarios when you are faced with this kind of dilemma. One, when you are in college and are looking for a job in your fourth year, or two when you are a self taught developer without formal computer science education who wants to work as a professional developer.</p>
+<h2>Finding jobs as a fresher</h2>
+<p>There are basically three ways a fresher can get a job.</p>
+<h3>College placements</h3>
+<p>One way is to sit in the college placements, apply to visiting companies, get your resume shortlisted, give interviews and get selected.</p>
+<p>You typically don&#8217;t get to negotiate the salary or terms of employment, and if you are not in a &#8220;good enough&#8221; college, the opportunities you get will be limited.</p>
+<p>People with the brightest academic records will get the best opportunities, as the judgement criteria will involve less amount of information and interviewers will have to rely on your academic record to get a sense of your work ethic. You can get offers from big corporation rather easily with this method, if you have good marks.</p>
+<h3>Internships</h3>
+<p>Second way is to work as interns during holidays and impress the fuck out of people you&#8217;re working for so they offer you a job. This has slightly better terms as compared to college placements as you have a lot more power here.</p>
+<p>You already know the company likes you and wants to have you, so you have the power to negotiate your salary. Unfortunately, this ship has sailed if you&#8217;re in your final year without an internship experience. (Unless you can keep your ego aside and take an internship <em>after</em> college.)</p>
+<h3>(For the lack of a better word) Off-campus</h3>
+<p>Third and the best way is to get in touch with companies, or get them to contact you and offer a job. This gives you the highest amount of leverage in negotiations and dictating the terms of your employment. People who join a company via this route also tend do better than their peers in the industry. These are the people with the fastest climbing careers you&#8217;ll see. These are the kinds of jobs you really really want.</p>
+<p>How to find a job like this? Act like a self taught developer, and you&#8217;ll get better jobs than self-taught developers (coz you have the degree too).</p>
+<p>Wait, what does that even mean, act like a self-taught developer?</p>
+<p>Well, what I mean by that is do the things a self-taught developer has to do to get jobs.</p>
+<h2>Finding jobs as a self taught developer</h2>
+<p>So how does a self taught developer get a job? After all, a person who has studied computer science has a degree to show for it, what do we as self taught developers have?</p>
+<p>Nothing. And that is the problem we need to fix.</p>
+<h3>Shipped Projects</h3>
+<p>You can&#8217;t show a degree, but you can show real world work. Work you did for yourself, for your clients, for your school, for your friends, for open source, or even just for fun whacky stuff.</p>
+<p>Just demonstrate that you have the skills required to complete a project and ship it. This will put you miles ahead of anyone else applying for the job with nothing to show, because this is <em>experience</em>. Granted it&#8217;s not the kind of experience old traditional companies look for when hiring in bulk, but that is, generally speaking, not the kind of jobs you really want to have.</p>
+<p>If you have more than one shipped projects, put them together on a website and call it your portfolio. The more impressive of a portfolio you have, the better your chances of getting a job. Multiply the chances by 10 if you have written a story behind these projects, things like how did you come about the idea, what did you use to make it, what it achieved, stuff like that.</p>
+<p>The complexity of these projects don&#8217;t matter. What matters is that they were shipped. I can bet you if you&#8217;re a developer worth his or her salt, you can create a project like Bingo Card Creator or even my <a href="https://play.google.com/store/apps/details?id=com.pilanites.streaks">habit tracking app</a> in a weekend or so, but 99% of you won&#8217;t have the confidence to ship the damn thing. Just the confidence to ship and doing basic marketing on these things are worth 1000s of dollars in direct revenue. And a lot more in indirect revenue.</p>
+<p>Remember, real artists ship. A work has no value unless it is seen. Unfound masterpieces are worthless.</p>
+<h3>Basic Marketing</h3>
+<p>Now, I am not asking you to have a huge AdWords or Facebook Ads budget to blow through, but doing just the basics right won&#8217;t hurt you.</p>
+<p>You should have a decent looking website providing details about your project. Even a small section in your personal website would be good, like <a href="http://tasdikrahman.me/projects/">this dude</a>.</p>
+<p><img class="wp-image-143 size-full" src="https://i1.wp.com/www.pilanites.com/wp-content/uploads/2017/05/m.jpg?resize=640%2C494" alt="Marketing page helps explain to everyone that you get shit done." width="640" height="494" srcset="https://i1.wp.com/www.pilanites.com/wp-content/uploads/2017/05/m.jpg?w=800&amp;ssl=1 800w, https://i1.wp.com/www.pilanites.com/wp-content/uploads/2017/05/m.jpg?resize=300%2C232&amp;ssl=1 300w, https://i1.wp.com/www.pilanites.com/wp-content/uploads/2017/05/m.jpg?resize=768%2C593&amp;ssl=1 768w" sizes="(max-width: 640px) 100vw, 640px" data-recalc-dims="1" /></p>
+<p>Providing a link to your project&#8217;s website helps recruiters understand what the heck is this thing that you&#8217;ve made.</p>
+<p>This also helps any potential users to actually go ahead and use your project. Your site should answer all the questions a potential user has about your project, and you&#8217;re basically good to go. This will be crucial if you want your users to help spread it.</p>
+<p>There is another thing which is us geeks tend to not do, is just going out and letting people know that you&#8217;ve released something. Post it to your college email lists and boards. Post it in your facebook groups. Heck, go ahead and post it to hacker news as well. You never know what clicks.</p>
+<h3>Networking</h3>
+<p>So, after shipping a bunch of projects, and trying the tiniest bit to market them, will your inbox be flooded with job offers?</p>
+<p>Oh hell no.</p>
+<p>This is just the beginning. I mean yes, you can certainly get some interest from people but that will be because they are already connected to you and were able to see what you made.</p>
+<p>To repeatedly connect to people who can do something for you, you need to do something which sounds very boring but is really rewarding. NETWORKING.</p>
+<p>And I am not talking about the superficial kind of networking where you try to exchange as many business cards as possible.</p>
+<p>The real networking is reaching out to people and helping them. When you help someone in whatever capacity you can, they remember it. If someone needs some help and you can&#8217;t help them, connect them to someone who can. This way you get the blessings from both of them.</p>
+<h3>Just Ask for It</h3>
+<p>Another thing you will need to develop is the ability to just ask for what you want. Most of the times, we developers are not confident enough to simply go ahead and ask for what we want. This is why developers don&#8217;t negotiate salaries. (I too am guilty of this behaviour.)</p>
+<p>Not sure if you could get a job in a startup you like? Just go ahead and ask for an interview.</p>
+<p>Draft a nice email which has links to your work, and confidently explains that you are a hardworking person who would like to join the company because you like $THINGS_THEY_WORK_ON. Don&#8217;t forget to highlight how you can add value to the team and give them your story.</p>
+<p>You might feel like this is bragging but it&#8217;s really not. It&#8217;s confident professionalism. People will love your for taking this initiative. Heck just write in the email that contacting them is a sign of a person who takes initiative. <img src="https://s.w.org/images/core/emoji/11.2.0/72x72/1f609.png" alt="😉" class="wp-smiley" style="height: 1em; max-height: 1em;" /></p>
+<h2>Conclusion</h2>
+<p>I have already written 1500 words but I&#8217;ve only scratched the surface of it all. I could probably expand on the all the points I&#8217;ve mentioned above and write full posts about them. Who knows, maybe I will. <img src="https://s.w.org/images/core/emoji/11.2.0/72x72/1f642.png" alt="🙂" class="wp-smiley" style="height: 1em; max-height: 1em;" /></p>
+<p>If you&#8217;d like that, I&#8217;d suggest you to get on my <a href="http://eepurl.com/bwfFAn">mailing list</a>, or follow me on <a href="https://twitter.com/shobhitic">twitter</a> and just let me know that you&#8217;re interested in it.</p>
+<p>If you have more questions, feel free to leave them in the comment, or just shoot me a mail. You can get my mail ID by sending out a tweet to me. <img src="https://s.w.org/images/core/emoji/11.2.0/72x72/1f642.png" alt="🙂" class="wp-smiley" style="height: 1em; max-height: 1em;" /></p>
+<p>All the best!</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/developer-job-without-experience/">How do I get a job as a developer without experience?</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+							<wfw:commentRss>https://www.pilanites.com/developer-job-without-experience/feed/</wfw:commentRss>
+		<slash:comments>1</slash:comments>
+						<post-id xmlns="com-wordpress:feed-additions:1">142</post-id>	</item>
+		<item>
+		<title>Why is a Software bug called a bug?</title>
+		<link>https://www.pilanites.com/software-bug-origin/</link>
+				<pubDate>Sun, 07 May 2017 06:39:09 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[Uncategorized]]></category>
+
+		<guid isPermaLink="false">http://www.pilanites.com/?p=135</guid>
+				<description><![CDATA[<p>As a software engineer, I have been trained to call any problem with my software as a software bug. These are annoying little things which me as a developer had overlooked during programming, or made a mistake in understanding the requirements, or just straight up...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/software-bug-origin/">Why is a Software bug called a bug?</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<p>As a software engineer, I have been trained to call any problem with my software as a software bug. These are annoying little things which me as a developer had overlooked during programming, or made a mistake in understanding the requirements, or just straight up errors in code.</p>
+<p>Most of the times I just call them a feature, and be done with it (hah!), but other times, I have to sit and debug them, checking through every line of code to make sure everything&#8217;s as it&#8217;s supposed to be.</p>
+<p>So as I was toiling away on the code for my <a href="https://play.google.com/store/apps/details?id=com.pilanites.streaks">habit tracking app</a>, trying to find a weird bug which affected only the users in the region observing <a href="https://en.wikipedia.org/wiki/Daylight_saving_time">Daylight Saving Time</a>, and only if they had made an entry on the date the change in time is observed.</p>
+<p>While trying to debug this bug, I learned about the perils of using the <code>Date</code> class in Java, and why we should use the <code>Instant</code> instead. To understand the context of why the <code>Date</code> class was designed the way it was, I tried reading the history of Java on Wikipedia.</p>
+<p>Unfortunately, I didn&#8217;t find anything about it there, but it lead me to a Wiki walk on the history of computing, which lead me try and figure out the reason why a software bug is called a bug.</p>
+<p>Before I tell you that, some history and context is necessary.</p>
+<h2 id="firstHeading" class="firstHeading" lang="en">Mechanical Relays as Transistors</h2>
+<p>Before we had transistors for our computers, we had to make do with a mechanical relay for giving us our 0s and 1s. These mechanical relays had a mechanical arm, which moved because of electromagnetic waves created by coils to manipulate the arm.</p>
+<p>Yes, this movement wasn&#8217;t really the most effective, and can do only 50 switches per second. That&#8217;s a 50 Hz processor. Compare that to the machine I am writing on today, which is a 2.4 GHz processor. It means it can switch between two different states roughly 2,400,000,000 times per second.</p>
+<p>That&#8217;s 4.8 million times faster than Harvard Mark I. Imagine the patience of those programmers (or operators, as they were rightly called back then).</p>
+<p>The modern chips use semiconductors to create these kinds of relays (now called a transistor) which don&#8217;t have a mechanical arm and can be very very small (or as my snapchat friends call it, small af).</p>
+<h2>Side effects of Mechanical Relays</h2>
+<p>Because the relays used were Mechanical in nature, they had a lot of limitations. Some of the limitations were the speed with which they can be switched (remember 50 Hz?). Another was wear and tear, because of which these relays will stop working, or stop working as efficiently as they used to work.</p>
+<p>Things like the mechanical arms getting jammed, or being permanently magnetized and stuck, were pretty common and documented problems.</p>
+<p>The frequent switching of arms also created friction with the air, because of which a lot of heat was generated. This heat was a problem as it usually hampered the efficient working of mechanical tools, and it attracted &#8211; wait for it &#8211; BUGS!</p>
+<h2>First case of Bugs (not Software Bugs though)</h2>
+<p>On 9th September 1947, Operators traced an error in the <a href="https://en.wikipedia.org/wiki/Harvard_Mark_II">Harvard Mark II</a> to a moth trapped in a relay, coining the term <i>bug</i>. This bug was carefully removed and taped to the log book.</p>
+<figure style="width: 740px" class="wp-caption aligncenter"><img class="size-medium" src="https://i2.wp.com/upload.wikimedia.org/wikipedia/commons/8/8a/H96566k.jpg?resize=640%2C504&#038;ssl=1" alt="First Ever Computer Bug!" width="640" height="504" data-recalc-dims="1" /><figcaption class="wp-caption-text">A page from the Harvard Mark II electromechanical computer&#8217;s log, featuring a dead moth that was removed from the device. The first ever Computer Bug!</figcaption></figure>
+<p>The operators who found it, kept the insect with the notation &#8220;First actual case of bug being found.&#8221;</p>
+<p>This log book, complete with attached moth, is part of the collection of the Smithsonian <a title="National Museum of American History" href="https://en.wikipedia.org/wiki/National_Museum_of_American_History">National Museum of American History</a>.</p>
+<p><a href="https://en.wikipedia.org/wiki/Grace_Hopper">Grace Hopper</a> (who worked on the Harvard Mark II, and invented the first compiler for a computer programming language) noted &#8220;From then on, when anything went wrong with the computer, we said it had bugs in it&#8221;.</p>
+<p>Stemming from the first bug, today we call errors or glitches in a program a <i>bug</i>.</p>
+<p>So there you go, the reason why it is called a bug, or now a software bug is because the very first bug was an actual living bug, which caused the problems in functioning of the computer.</p>
+<p>That first bug was an actual bug, which made the computer to not work as it should. The process of removing bugs is called <em>debugging</em>, which Hopper and her team had to do quite literally.</p>
+<p>Further reading: <a href="https://en.wikipedia.org/wiki/Software_bug">Wikipedia page on Software Bug</a>, <a href="https://en.wikipedia.org/wiki/Harvard_Mark_I">Wikipedia page on Harvard Mark I</a>, and <a href="https://en.wikipedia.org/wiki/Relay">Relays.</a></p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/software-bug-origin/">Why is a Software bug called a bug?</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+									<post-id xmlns="com-wordpress:feed-additions:1">135</post-id>	</item>
+		<item>
+		<title>More features always leads to a better product</title>
+		<link>https://www.pilanites.com/more-features-better-product/</link>
+				<pubDate>Mon, 24 Oct 2016 12:38:36 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[Uncategorized]]></category>
+
+		<guid isPermaLink="false">http://www.pilanites.com/?p=63</guid>
+				<description><![CDATA[<p>There is a general understanding between people in the tech world that more features degrade a product. Their rationale is that when you add more features, you dilute the core functionality or destroy the simple UX of doing one thing well. The web is filled...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/more-features-better-product/">More features always leads to a better product</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<p class="wp-image-64 size-full">There is a general understanding between people in the tech world that more features degrade a product. Their rationale is that when you add more features, you dilute the core functionality or destroy the simple UX of doing one thing well.</p>
+<p>The web is filled with articles claiming how adding more features killed the product X. They argue that adding more features slows down the product, makes it harder to use, and becomes a source of lot of frustration.</p>
+<p>They do hold some merit, mostly because feature bloat, when not treated with good care, kills the UX. But the fault their lies with the designer, not the idea of more features.</p>
+<p>If I am using many small products which perform their own functions, I&#8217;ll have to keep switching between them and create a very inefficient workflow around getting the work done.</p>
+<p>It&#8217;ll take a lot of my time, cognitive effort, or precious developer time (to create an integration) to get my work done. I will gravitate towards a solution which grows in scope to eat up all the related chunks of functionality and allowing me to use a product &#8220;which just works&#8221;.</p>
+<p>No need to keep importing and exporting data from one product to other, no need to wait for all the different products to load and finish their voodoo before being usable, no need to even remember multiple account usernames and passwords!</p>
+<p>Take the example of WhatsApp.</p>
+<p>Everyone with &#8220;Do only one thing well&#8221; mentality will say that adding a Photo editor or annotator to a chat app doesn&#8217;t make sense. But that is what they have done and made it much easier to perform those functions.</p>
+<p>If I wanted to share a screen shot and highlight the something in that image, I had to first take a screenshot, then open it in an image editor app, make the necessary changes, save the image to phone, open WhatsApp, again search for the chat where I wanted to send the image, then find that image to be able to share it with that chat.</p>
+<p>Compare this process with the current process, you take a screenshot, open your chat, choose the image and their you&#8217;ll get all the commonly required editing options. Perform the necessary edits and saving the image shares it. You don&#8217;t need to open another app, wait for it to open and hold up precious memory.</p>
+<p>But, at the same time, they&#8217;ve made sure that you can send an image quickly if you don&#8217;t want all the editing options.</p>
+<p>Another example is Google.</p>
+<p>Do you really want to go back to the old version of Google with no auto-complete feature, no smart integration of Photos, YouTube videos, and Mobile apps in the search result?</p>
+<p>What about adding native support for Photos, videos, and Live streams in Twitter? Would you rather click a link, wait for the site/app to load, then wait for it load your photo or video and then start viewing it, or do you like the current see-it-without-going-anywhere version of Twitter?</p>
+<p>More features are a good thing, they increase the amount of value consumer can derive from your product, but what really ends up happening is that the makers or the creators keep adding new features, without thinking about how and where do they fit in their product, when to show the new features, and if you need to show them at all.</p>
+<p>Remotes of DVD players are a classic example of this kind of problem. Everything is presented to me at once, without any context, hoping that I&#8217;ll read the manual and figure out the which button does what.</p>
+<figure id="attachment_64" aria-describedby="caption-attachment-64" style="width: 630px" class="wp-caption aligncenter"><img class="wp-image-64 size-full" src="https://i0.wp.com/www.pilanites.com/wp-content/uploads/2016/10/grandmaremote.jpg?resize=630%2C844" alt="Better UX for a TV/DVD remote" width="630" height="844" srcset="https://i0.wp.com/www.pilanites.com/wp-content/uploads/2016/10/grandmaremote.jpg?w=630&amp;ssl=1 630w, https://i0.wp.com/www.pilanites.com/wp-content/uploads/2016/10/grandmaremote.jpg?resize=224%2C300&amp;ssl=1 224w" sizes="(max-width: 630px) 100vw, 630px" data-recalc-dims="1" /><figcaption id="caption-attachment-64" class="wp-caption-text">Better UX for a TV/DVD remote 99% of the times</figcaption></figure>
+<p class="wp-image-64 size-full">Now, I don&#8217;t have a clear answer for what could be a better solution to this problem, on top of that it is a hardware product which is very difficult to alter after production and shipping.</p>
+<p>Maybe, we need to go back and care about our products like <a href="https://medium.com/@shobhitic/indian-moms-are-great-ux-designers-4a092673c04f">our mothers care about us</a>. Providing the best UX is a very tough, but very rewarding problem, which ends up improving lives of everyone around the product.</p>
+<p>I know, you have tons of examples where adding features have killed the products, share them here in comments/responses!</p>
+<hr />
+<p><!-- Begin MailChimp Signup Form --></p>
+<style type="text/css">
+	#mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }<br />
+	/* Add your own MailChimp form style overrides in your site stylesheet or in this style block.<br />
+	   We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */<br />
+</style>
+<div id="mc_embed_signup">
+<form id="mc-embedded-subscribe-form" class="validate" action="//pilanites.us8.list-manage.com/subscribe/post?u=307c2721bdd03e12f241c1707&amp;id=9a6f5efe13" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+<div id="mc_embed_signup_scroll">
+<h2>Want these posts in your inbox?</h2>
+<div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
+<div class="mc-field-group"><label for="mce-EMAIL">Email Address <span class="asterisk">*</span><br />
+</label><br />
+<input id="mce-EMAIL" class="required email" name="EMAIL" type="email" value="" /></div>
+<div class="mc-field-group"><label for="mce-NAME">First Name </label><br />
+<input id="mce-NAME" class="" name="NAME" type="text" value="" /></div>
+<div id="mce-responses" class="clear"></div>
+<p><!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups--></p>
+<div style="position: absolute; left: -5000px;"><input tabindex="-1" name="b_307c2721bdd03e12f241c1707_9a6f5efe13" type="text" value="" /></div>
+<div class="clear"><input id="mc-embedded-subscribe" class="button" name="subscribe" type="submit" value="Subscribe" /></div>
+</div>
+</form>
+</div>
+<p><!--End mc_embed_signup--></p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/more-features-better-product/">More features always leads to a better product</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+									<post-id xmlns="com-wordpress:feed-additions:1">63</post-id>	</item>
+		<item>
+		<title>Purpose Code for Apps in India</title>
+		<link>https://www.pilanites.com/purpose-code-apps-india/</link>
+				<comments>https://www.pilanites.com/purpose-code-apps-india/#comments</comments>
+				<pubDate>Tue, 20 Sep 2016 10:33:27 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[Uncategorized]]></category>
+
+		<guid isPermaLink="false">http://www.pilanites.com/?p=57</guid>
+				<description><![CDATA[<p>If you are selling your apps or in-app purchases in Play Store or App Store and receiving money in a corporate account, you&#8217;ll be asked the purpose code for the transaction for regulatory purposes. The concerned section of the purpose codes for us developers will...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/purpose-code-apps-india/">Purpose Code for Apps in India</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<p>If you are selling your apps or in-app purchases in Play Store or App Store and receiving money in a corporate account, you&#8217;ll be asked the purpose code for the transaction for regulatory purposes.</p>
+<p>The concerned section of the purpose codes for us developers will be &#8220;Telecommunication, Computer &amp; Information Services&#8221;.</p>
+<p>There, you&#8217;ll find a code P0802 &#8211; Software Consultancy/Implementation (other than those covered in SOFTEX).</p>
+<p>This should work for you.</p>
+<p>In case you are registered with the STPI (<a href="https://en.wikipedia.org/wiki/Software_Technology_Parks_of_India">Software Technology Parks of India</a>), then you may use the code P0807 &#8211; Off site Software exports.</p>
+<p>The same purpose code can be used for receiving money for Ads shown in your app or your website.</p>
+<p>Hope those dollars keep rolling in for you. <img src="https://s.w.org/images/core/emoji/11.2.0/72x72/1f642.png" alt="🙂" class="wp-smiley" style="height: 1em; max-height: 1em;" /></p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/purpose-code-apps-india/">Purpose Code for Apps in India</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+							<wfw:commentRss>https://www.pilanites.com/purpose-code-apps-india/feed/</wfw:commentRss>
+		<slash:comments>3</slash:comments>
+						<post-id xmlns="com-wordpress:feed-additions:1">57</post-id>	</item>
+		<item>
+		<title>Best way to get started with a web framework</title>
+		<link>https://www.pilanites.com/best-way-get-started-web-framework/</link>
+				<comments>https://www.pilanites.com/best-way-get-started-web-framework/#comments</comments>
+				<pubDate>Wed, 31 Aug 2016 09:55:15 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[Uncategorized]]></category>
+
+		<guid isPermaLink="false">http://www.pilanites.com/?p=52</guid>
+				<description><![CDATA[<p>If you’re looking for a program to code up to learn about a web framework, I strongly suggest you try writing a URL shortener. You’ll understand the concepts of database, authentication (if you allow a user to log in), dynamic routing, permanent routing, creating views,...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/best-way-get-started-web-framework/">Best way to get started with a web framework</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<p>If you’re looking for a program to code up to learn about a web framework, I strongly suggest you try writing a URL shortener.</p>
+<p>You’ll understand the concepts of database, authentication (if you allow a user to log in), dynamic routing, permanent routing, creating views, form validation and of course, sending response other than 200 (redirect <img src="https://s.w.org/images/core/emoji/11.2.0/72x72/1f609.png" alt="😉" class="wp-smiley" style="height: 1em; max-height: 1em;" />).</p>
+<p>So, let me write down a description for you to make things easier.</p>
+<p>What you&#8217;ll build is a landing page where I have a text box shown. I can enter a link and be given a shortened link in return. The shortened link, when opened, should redirect me to the original link.</p>
+<p>If it is an invalid link, the page should say so and not create a short url for it.</p>
+<p>Bonus points for allowing me to login and see my previous shortened links. More points if you count the number of redirects for each link.</p>
+<p>This is basically it. If you want to increase the complexity, add validations on the client side, create a responsive UI and expose a JSON API with token authentication for each app/client.</p>
+<p>Need more complexity? Store the geolocation of each redirect, by inspecting their IP address. Create a graph to analyze when the most amount of traffic goes through each URL.</p>
+<p>Working through this problem will provide you with a good deal of knowledge about the new framework you&#8217;re trying out.</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/best-way-get-started-web-framework/">Best way to get started with a web framework</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+							<wfw:commentRss>https://www.pilanites.com/best-way-get-started-web-framework/feed/</wfw:commentRss>
+		<slash:comments>3</slash:comments>
+						<post-id xmlns="com-wordpress:feed-additions:1">52</post-id>	</item>
+		<item>
+		<title>Pokemon GO is not a testament of success for Augmented Reality</title>
+		<link>https://www.pilanites.com/pokemon-go-not-augmented-reality/</link>
+				<pubDate>Tue, 19 Jul 2016 10:18:42 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[Uncategorized]]></category>
+
+		<guid isPermaLink="false">http://www.pilanites.com/?p=35</guid>
+				<description><![CDATA[<p>Pokemon GO is everywhere. People have been playing it all over the world, even though it isn&#8217;t yet available in most parts of the world. It is driving traffic to app download mirrors, local businesses, religious places and what not. In just a week of...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/pokemon-go-not-augmented-reality/">Pokemon GO is not a testament of success for Augmented Reality</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<p>Pokemon GO is everywhere. People have been playing it all over the world, even though it isn&#8217;t yet available in most parts of the world.</p>
+<p>It is driving traffic to app download mirrors, local businesses, religious places and what not. In just a week of release, it has crossed Tinder&#8217;s daily downloads, <a href="https://www.facebook.com/shobhitic/posts/10154341202597533">went past &#8220;porn&#8221; in Google trends</a>, and is apparently set cross Twitter&#8217;s Daily Active Users.</p>
+<p>It&#8217;s success, though, is being attributed to Augmented Reality part of the app, which isn&#8217;t the case. Yes, augmented reality is a part of the game play, but it isn&#8217;t a feature which truly defines the gaming and mechanics here.</p>
+<p>GPS has a bigger hand in Pokemon GO&#8217;s success than Augmented Reality.</p>
+<p>The need to walk to level up, or hatch an egg, or find Pokestops and Gyms, or even Pokemon for that matter. All the defining mechanics of the game are based on GPS input, and not on the AR part of it.</p>
+<p>You can even turn off AR if you want in this game, but mocking or faking your location gets you banned from the game. The game designers are telling you themselves that AR is just for the hype, and it might even degrade your game-play experience. It&#8217;s increasingly common for players to turn off AR when they really want to catch a Pokemon.</p>
+<p>AR, in its current form, is just a novelty feature of the game. AR is not driving traffic to small businesses, location is!</p>
+<p>I came across this tweet by Anil Dash which perfectly sums up the AR part of game.</p>
+<blockquote class="twitter-tweet" data-width="550">
+<p lang="en" dir="ltr">Broken tech culture is seeing the success of Pokémon Go &amp; attributing it to AR instead of a huge 25-year-old global cultural phenomenon.</p>
+<p>&mdash; Anil Dash (@anildash) <a href="https://twitter.com/anildash/status/753261028801187840">July 13, 2016</a></p></blockquote>
+<p><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script></p>
+<p>The true genius of the game is using your GPS location as an input for game. All the things revolve around that. Want to find a new Pokemon? Move around. Short of Pokeballs? Go to a Pokestop. Want to hatch an egg? Go for a fucking walk!</p>
+<p>&nbsp;</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/pokemon-go-not-augmented-reality/">Pokemon GO is not a testament of success for Augmented Reality</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+									<post-id xmlns="com-wordpress:feed-additions:1">35</post-id>	</item>
+		<item>
+		<title>Streaks for Android completes one year!</title>
+		<link>https://www.pilanites.com/streaks-android-one-year/</link>
+				<pubDate>Sat, 25 Jun 2016 04:40:29 +0000</pubDate>
+		<dc:creator><![CDATA[shobhit]]></dc:creator>
+				<category><![CDATA[Uncategorized]]></category>
+
+		<guid isPermaLink="false">http://www.pilanites.com/?p=19</guid>
+				<description><![CDATA[<p>Today marks one year anniversary of the launch of my Streaks Habit Tracker app for Android. While it has far exceeded any expectation I had in the beginning, I have been disappointed with its performance overall. The problem lies with me though. I haven&#8217;t really...</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/streaks-android-one-year/">Streaks for Android completes one year!</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></description>
+								<content:encoded><![CDATA[<p>Today marks one year anniversary of the launch of my <a href="https://play.google.com/store/apps/details?id=com.pilanites.streaks">Streaks Habit Tracker app for Android</a>.</p>
+<p>While it has far exceeded any expectation I had in the beginning, I have been disappointed with its performance overall. The problem lies with me though. I haven&#8217;t really given it the amount of time I could have.</p>
+<p>Nevertheless, this was my third app overall on Play Store (the first two apps were launched when it was called Android Market) and the first one with some sort of real monetization.</p>
+<p>My first two apps weren&#8217;t able to monetize because Indian developers at that time weren&#8217;t allowed to collect payments on Android Market (a.k.a. The Play Store).</p>
+<p>I did have a small ad banner in one of the apps in the most obscure place which people rarely got to see. But still, I made $20 off that app in 3 years time.</p>
+<p>I left android app development for about 2 years and focused mostly on Ruby on Rails and then NodeJS for my day job at <a href="https://crowdfireapp.com/">Crowdfire</a>.</p>
+<p>There, I had this idea of an app which could help me keep track of habits I was trying to cultivate. I made the app and released on 23rd June 2015 on beta before going live 4 days later.</p>
+<p>With a mixture of some shitty ASO, my facebook audience, a post on Quora and with a little help from my colleagues, I was able to get 500 users, out of which 4 had converted.</p>
+<p>Oh yeah, I forgot to mention that I had posted my <a href="https://www.producthunt.com/tech/streaks-daily-task-reminder">habit tracker on Product Hunt</a> as well.</p>
+<p>Nothing great till now.</p>
+<h3>Stats</h3>
+<p>Till 3rd July 2015, the stats from my Google Analytics looked like this &#8211;</p>
+<p><img class="aligncenter" src="https://i2.wp.com/i.imgur.com/66Gu6cp.png?resize=640%2C144&#038;ssl=1" width="640" height="144" data-recalc-dims="1" /></p>
+<p>&nbsp;</p>
+<p>On 4th July, the app was picked up by <a href="http://lifehacker.com/streaks-is-a-simple-habit-tracker-and-daily-reminder-fo-1715335375">Lifehacker</a> and the stats were much better.</p>
+<p><img class="aligncenter" src="https://i1.wp.com/i.imgur.com/UoWAZGS.png?resize=640%2C138&#038;ssl=1" alt="Stats after Lifehacker coverage." width="640" height="138" data-recalc-dims="1" /></p>
+<p>600 new users and 16 sales. I wrote about this on <a href="https://www.reddit.com/r/Entrepreneur/comments/3c3hvs/spent_0_on_an_android_only_app_with_unoriginal/">reddit</a> as well. Interesting to read all this in retrospect.</p>
+<p>Some days later, the app was picked up by <a href="http://thenextweb.com/apps/2015/07/06/streaks-for-android-helps-you-stick-with-your-habits-using-jerry-seinfelds-productivity-trick/">TheNextWeb</a> and gave another nice spike.</p>
+<p>The stats after all the initial &#8220;press coverage&#8221;.</p>
+<p><img class="aligncenter" src="https://i2.wp.com/i.imgur.com/77s4n9L.png?resize=640%2C141&#038;ssl=1" alt="Stats after publication in TheNextWeb" width="640" height="141" data-recalc-dims="1" /></p>
+<p>After that, I didn&#8217;t really touch the app for about 6-7 months. I did updated the description once and changed the logo to something which looked a little better (still looks ugly af tbh).</p>
+<p>The app got featured in Russia in September for reasons still unknown to me and gave another spike to downloads and users. Since then, there hasn&#8217;t been any big spike, but small occasional increase in numbers and sales.</p>
+<p>Stats from August till today &#8211;</p>
+<p><img class="aligncenter" src="https://i1.wp.com/i.imgur.com/VdE4WED.png?resize=640%2C140&#038;ssl=1" alt="Stats from August 2015 to June 2016" width="640" height="140" data-recalc-dims="1" /></p>
+<h3>Sales</h3>
+<p>The sales were rocky the whole year. The best month was July because of all the new users downloading and trying out the app. Since then the sales have been nearly consistent giving $30-$50 every month.</p>
+<p>I had accidentally increased the price of in-app purchase and forgot to move it back to original price. The impact on sales wasn&#8217;t noticeable but revenue increased. One happy accident! <img src="https://s.w.org/images/core/emoji/11.2.0/72x72/1f642.png" alt="🙂" class="wp-smiley" style="height: 1em; max-height: 1em;" /></p>
+<h3>Some mistakes in retrospect</h3>
+<p>I was naive enough to think that I&#8217;ll distribute the app only on Google Play and it will just stay there.</p>
+<p>BIG MISTAKE!</p>
+<p>As soon as the app started appearing in publications and news sites, Xiaomi and other app markets started uploading the APK to their own stores. Since the only monetisation strategy was through in-app purchases provided by Google Play, users in those store were not able to pay (in case they wanted to).</p>
+<p>I had always thought that Streaks will be an app which will always be running in the background, silently collecting data through notification bar. Thus, I reasoned, ads will be an annoying method of monetisation which won&#8217;t be effective as well.</p>
+<p>If I had put in Ads in the app, I would have been able to monetise the users from other stores (which, according to my Google Analytics, accounts for about 20% of my userbase).</p>
+<p>Another mistake I made was to think about branding (using Streaks in package name) and not optimizing it for search optimization.</p>
+<p>Other habit tracking apps had the words &#8220;habit tracker&#8221; in their package name which gave them a boost in search results. I unfortunately did not include any keyword in the package name and thus have been consistently getting bad ranks in search results.</p>
+<h3>User acquisition strategies</h3>
+<p>I&#8217;ve been able to try multiple user acquisition strategies, including Ads!</p>
+<p>The best kind of users (the ones who pay) are acquire through search. Nearly 90% of sales have been to the users who downloaded after searching.</p>
+<p>Having said that, getting a mention in press isn&#8217;t that bad as well. Downloads from Lifehacker and TheNextWeb mentions also provided some sales.</p>
+<p>Getting featured in the Play Store though isn&#8217;t that helpful. You get a lot of downloads but very few of them convert. In fact, getting featured (in the Russian Play Store) had almost no impact on bottom line. Things might have been different if the feature was in the US or UK (places with most sales).</p>
+<p>About 8 months after launch, I looked at the numbers. I was making about Re. 1 for every install (the actual number was slightly higher, but escapes my memory right now). I figured if I could get installs for less than Re. 1, I&#8217;ll be able to create an engine where you put in the fuel and you get out your energy.. or sales in this case.</p>
+<p>I tried running Ads with CPI (cost per install) of Re. 1 and got literally 0 impressions in 2 weeks. I still wanted to explore ads, so I increased my bid to Rs 10. I started getting some impressions and downloads, with an effective install for about Rs. 7.</p>
+<p>I made a loss on this campaign as only 4 of the 500 people who installed paid anything. This is why it is impossible to make a business with ad campaigns if the only way you&#8217;re going to earn is through small ticket in-app purchases. Had this been a transaction based app, the ad campaign would have been much more effective because of much better Life time value (LTV) of every download (mine is Re. 1).</p>
+<h3>Closing thoughts</h3>
+<p>In the end, I would say I have been very lucky for the app to perform so well, even though I was guilty of not giving it enough time. Will be adding better onboarding (currently, it&#8217;s just a text if there are no tasks), more features and most importantly, more paid features.</p>
+<p>Let&#8217;s hope I be more productive this time.</p>
+<p>Thanks for reading!</p>
+<p>The post <a rel="nofollow" href="https://www.pilanites.com/streaks-android-one-year/">Streaks for Android completes one year!</a> appeared first on <a rel="nofollow" href="https://www.pilanites.com">Pilanites</a>.</p>
+]]></content:encoded>
+									<post-id xmlns="com-wordpress:feed-additions:1">19</post-id>	</item>
+	</channel>
+</rss>
